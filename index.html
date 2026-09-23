@@ -1,0 +1,3707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<title>Pakistan Polio Surveillance</title>
+
+<!-- Leaflet -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+>
+
+
+<style>
+
+/* =========================================================
+   ROOT
+   ========================================================= */
+
+:root {
+
+    --blue-dark: #062c4f;
+    --blue: #0d3b66;
+    --blue-mid: #397eb1;
+    --blue-light: #a9cfe8;
+
+    --white: #ffffff;
+    --muted: #aab8c4;
+
+    --glass: rgba(8, 20, 30, 0.78);
+    --glass-light: rgba(8, 20, 30, 0.64);
+
+    --border: rgba(255,255,255,0.13);
+
+    --font:
+        'IBM Plex Sans',
+        Arial,
+        sans-serif;
+
+    --mono:
+        'IBM Plex Mono',
+        monospace;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+
+    font-family: var(--font);
+
+    background: #08141d;
+    color: var(--white);
+
+}
+
+
+/* =========================================================
+   LOADING SCREEN
+   ========================================================= */
+
+#loader {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #0d3b66 0%,
+            #071723 45%,
+            #03090d 100%
+        );
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 22px;
+
+    transition:
+        opacity .7s ease,
+        visibility .7s ease;
+
+}
+
+
+#loader.hidden {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+}
+
+
+.loader-ring {
+
+    width: 78px;
+    height: 78px;
+
+    border:
+
+        2px solid
+        rgba(255,255,255,.18);
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        loaderSpin 1s linear infinite;
+
+}
+
+
+.loader-inner {
+
+    position: absolute;
+
+    width: 36px;
+    height: 36px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid
+        rgba(255,255,255,.12);
+
+    border-bottom-color:
+        #8cc7eb;
+
+    animation:
+        loaderSpinReverse 1.4s linear infinite;
+
+}
+
+
+.loader-mark {
+
+    position: relative;
+
+    width: 78px;
+    height: 78px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+}
+
+
+.loader-title {
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    letter-spacing: .08em;
+
+    text-transform: uppercase;
+
+}
+
+
+.loader-sub {
+
+    font-family: var(--mono);
+
+    font-size: 10px;
+
+    color: rgba(255,255,255,.58);
+
+    letter-spacing: .08em;
+
+}
+
+
+@keyframes loaderSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+@keyframes loaderSpinReverse {
+
+    to {
+        transform: rotate(-360deg);
+    }
+
+}
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+#map {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 1;
+
+    background: #10232f;
+
+}
+
+
+/* =========================================================
+   SATELLITE OVERLAY
+   ========================================================= */
+
+.map-vignette {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 400;
+
+    pointer-events: none;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.58) 0%,
+            rgba(0,0,0,.05) 20%,
+            rgba(0,0,0,0) 55%,
+            rgba(0,0,0,.35) 100%
+        );
+
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar {
+
+    position: absolute;
+
+    z-index: 1000;
+
+    top: 22px;
+    left: 22px;
+    right: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    pointer-events: none;
+
+}
+
+
+.brand {
+
+    pointer-events: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px 15px;
+
+    background:
+        var(--glass);
+
+    backdrop-filter:
+        blur(16px);
+
+    -webkit-backdrop-filter:
+        blur(16px);
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 9px;
+
+    box-shadow:
+        0 8px 30px
+        rgba(0,0,0,.22);
+
+}
+
+
+.brand-mark {
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 7px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d3b66,
+            #397eb1
+        );
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-family: var(--mono);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+.brand-text strong {
+
+    display: block;
+
+    font-size: 13px;
+
+    letter-spacing: .02em;
+
+}
+
+
+.brand-text span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    font-family: var(--mono);
+
+    font-size: 9px;
+
+    color: var(--muted);
+
+    letter-spacing: .04em;
+
+}
+
+
+.nav {
+
+    pointer-events: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 5px;
+
+    background:
+        var(--glass);
+
+    backdrop-filter:
+        blur(16px);
+
+    -webkit-backdrop-filter:
+        blur(16px);
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 9px;
+
+}
+
+
+.nav button {
+
+    border: none;
+
+    background: transparent;
+
+    color: rgba(255,255,255,.62);
+
+    padding: 9px 14px;
+
+    border-radius: 6px;
+
+    font-family: var(--font);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+
+}
+
+
+.nav button:hover {
+
+    color: white;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+
+.nav button.active {
+
+    background:
+        rgba(255,255,255,.13);
+
+    color: white;
+
+}
+
+
+/* =========================================================
+   YEAR BADGE
+   ========================================================= */
+
+.year-badge {
+
+    position: absolute;
+
+    z-index: 900;
+
+    top: 96px;
+    left: 22px;
+
+    background:
+        var(--glass);
+
+    backdrop-filter:
+        blur(14px);
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 8px;
+
+    padding: 10px 13px;
+
+    pointer-events: none;
+
+}
+
+
+.year-badge .small {
+
+    font-family: var(--mono);
+
+    font-size: 8px;
+
+    color: var(--muted);
+
+    letter-spacing: .08em;
+
+    text-transform: uppercase;
+
+}
+
+
+.year-badge .year {
+
+    font-family: var(--mono);
+
+    font-size: 25px;
+
+    font-weight: 600;
+
+    margin-top: 2px;
+
+}
+
+
+/* =========================================================
+   MAP LEGEND
+   ========================================================= */
+
+.map-legend {
+
+    position: absolute;
+
+    z-index: 900;
+
+    left: 22px;
+
+    bottom: 24px;
+
+    background:
+        var(--glass);
+
+    backdrop-filter:
+        blur(14px);
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 8px;
+
+    padding: 12px 14px;
+
+    pointer-events: none;
+
+}
+
+
+.legend-title {
+
+    font-family: var(--mono);
+
+    font-size: 8px;
+
+    color: var(--muted);
+
+    text-transform: uppercase;
+
+    letter-spacing: .08em;
+
+    margin-bottom: 8px;
+
+}
+
+
+.legend-scale {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+
+.gradient {
+
+    width: 130px;
+
+    height: 8px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #dceff9,
+            #a9cfe8,
+            #6fa8d0,
+            #397eb1,
+            #0d3b66
+        );
+
+}
+
+
+.legend-labels {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 5px;
+
+    color: rgba(255,255,255,.55);
+
+    font-family: var(--mono);
+
+    font-size: 8px;
+
+}
+
+
+/* =========================================================
+   SLIDER
+   ========================================================= */
+
+.slider-container {
+
+    position: absolute;
+
+    z-index: 1200;
+
+    bottom: 0;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%)
+        translateY(68px);
+
+    width: min(700px, calc(100% - 40px));
+
+    padding: 15px 18px 18px;
+
+    background:
+        var(--glass);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    border:
+        1px solid
+        var(--border);
+
+    border-bottom: none;
+
+    border-radius:
+        12px 12px 0 0;
+
+    transition:
+        transform .3s ease;
+
+}
+
+
+/*
+   The slider appears when the user moves
+   into the bottom area of the map.
+*/
+
+.slider-trigger {
+
+    position: absolute;
+
+    z-index: 1199;
+
+    left: 0;
+    right: 0;
+
+    bottom: 0;
+
+    height: 55px;
+
+}
+
+
+.slider-trigger:hover
+~ .slider-container,
+.slider-container:hover {
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+
+}
+
+
+.slider-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 9px;
+
+}
+
+
+.slider-year {
+
+    font-family: var(--mono);
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+}
+
+
+.slider-total {
+
+    font-family: var(--mono);
+
+    font-size: 9px;
+
+    color: var(--muted);
+
+}
+
+
+input[type="range"] {
+
+    width: 100%;
+
+    height: 4px;
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    background:
+        rgba(255,255,255,.22);
+
+    border-radius: 10px;
+
+    outline: none;
+
+}
+
+
+input[type="range"]::-webkit-slider-thumb {
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    width: 17px;
+
+    height: 17px;
+
+    border-radius: 50%;
+
+    background:
+        #ffffff;
+
+    border:
+        3px solid
+        #0d3b66;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(255,255,255,.35);
+
+    cursor: pointer;
+
+}
+
+
+input[type="range"]::-moz-range-thumb {
+
+    width: 15px;
+
+    height: 15px;
+
+    border-radius: 50%;
+
+    background:
+        #ffffff;
+
+    border:
+        3px solid
+        #0d3b66;
+
+    cursor: pointer;
+
+}
+
+
+.year-ticks {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 7px;
+
+    font-family: var(--mono);
+
+    font-size: 8px;
+
+    color:
+        rgba(255,255,255,.42);
+
+}
+
+
+/* =========================================================
+   DATA PANEL
+   ========================================================= */
+
+#dataPanel {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    background:
+        #08141d;
+
+    transform:
+        translateX(100%);
+
+    transition:
+        transform .45s
+        cubic-bezier(.4,0,.2,1);
+
+    overflow-y: auto;
+
+}
+
+
+#dataPanel.open {
+
+    transform:
+        translateX(0);
+
+}
+
+
+.data-page {
+
+    width:
+        min(1150px, 92%);
+
+    margin:
+        0 auto;
+
+    padding:
+        100px 0 60px;
+
+}
+
+
+.data-header {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.1);
+
+    padding-bottom: 20px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.data-header h1 {
+
+    margin: 0;
+
+    font-size: 28px;
+
+}
+
+
+.data-header p {
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    margin:
+        7px 0 0;
+
+}
+
+
+.close-data {
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:
+        1px solid
+        var(--border);
+
+    color: white;
+
+    border-radius: 7px;
+
+    padding:
+        10px 15px;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+}
+
+
+.close-data:hover {
+
+    background:
+        rgba(255,255,255,.1);
+
+}
+
+
+/* =========================================================
+   STAT GRID
+   ========================================================= */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.stat-card {
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
+    border-radius: 9px;
+
+    padding: 18px;
+
+}
+
+
+.stat-number {
+
+    font-family: var(--mono);
+
+    font-size: 27px;
+
+    font-weight: 600;
+
+}
+
+
+.stat-label {
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+    margin-top: 6px;
+
+}
+
+
+/* =========================================================
+   DATA GRID
+   ========================================================= */
+
+.data-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 360px;
+
+    gap: 20px;
+
+}
+
+
+.panel {
+
+    background:
+        rgba(255,255,255,.035);
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
+    border-radius: 9px;
+
+    padding: 18px;
+
+}
+
+
+.panel h2 {
+
+    margin:
+        0 0 14px;
+
+    font-size: 14px;
+
+}
+
+
+.panel-description {
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.6;
+
+    margin-bottom: 13px;
+
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-wrapper {
+
+    max-height: 430px;
+
+    overflow: auto;
+
+}
+
+
+table {
+
+    width: 100%;
+
+    border-collapse:
+        collapse;
+
+    font-size: 11px;
+
+}
+
+
+th {
+
+    position: sticky;
+
+    top: 0;
+
+    background:
+        #101f2a;
+
+    color: var(--muted);
+
+    font-family: var(--mono);
+
+    font-size: 8px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing: .06em;
+
+    text-align: left;
+
+    padding:
+        9px 7px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.1);
+
+}
+
+
+td {
+
+    padding:
+        9px 7px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.06);
+
+    color:
+        rgba(255,255,255,.8);
+
+}
+
+
+td:last-child {
+
+    font-family:
+        var(--mono);
+
+    color:
+        #8fc8ea;
+
+}
+
+
+/* =========================================================
+   CSV EDITOR
+   ========================================================= */
+
+textarea {
+
+    width: 100%;
+
+    min-height: 260px;
+
+    resize: vertical;
+
+    background:
+        #07131c;
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    border-radius: 7px;
+
+    color:
+        #c8e0ef;
+
+    font-family:
+        var(--mono);
+
+    font-size: 10px;
+
+    line-height: 1.6;
+
+    padding: 12px;
+
+    outline: none;
+
+}
+
+
+textarea:focus {
+
+    border-color:
+        #397eb1;
+
+}
+
+
+.action-button {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 11px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background:
+        #0d3b66;
+
+    color: white;
+
+    font-family: var(--font);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.action-button:hover {
+
+    background:
+        #14558d;
+
+}
+
+
+/* =========================================================
+   GEOJSON UPLOAD
+   ========================================================= */
+
+.upload-box {
+
+    margin-top: 18px;
+
+    border:
+        1px dashed
+        rgba(255,255,255,.18);
+
+    border-radius: 8px;
+
+    padding: 15px;
+
+}
+
+
+.upload-label {
+
+    display: block;
+
+    color: rgba(255,255,255,.75);
+
+    font-size: 11px;
+
+    margin-bottom: 8px;
+
+}
+
+
+input[type="file"] {
+
+    width: 100%;
+
+    color:
+        var(--muted);
+
+    font-size: 10px;
+
+}
+
+
+.help {
+
+    margin-top: 8px;
+
+    color:
+        var(--muted);
+
+    font-size: 9px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================================================
+   LEAFLET
+   ========================================================= */
+
+.leaflet-control-zoom {
+
+    border:
+        1px solid
+        rgba(255,255,255,.15)
+        !important;
+
+}
+
+
+.leaflet-control-zoom a {
+
+    background:
+        rgba(8,20,30,.8)
+        !important;
+
+  
+    border:
+        none
+        !important;
+
+}
+
+
+.leaflet-control-attribution {
+
+    background:
+        rgba(0,0,0,.65)
+        !important;
+
+    color:
+        rgba(255,255,255,.55)
+        !important;
+
+}
+
+
+.leaflet-control-attribution a {
+
+    color:
+        rgba(255,255,255,.75)
+        !important;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .topbar {
+
+        top: 12px;
+        left: 12px;
+        right: 12px;
+
+    }
+
+
+    .brand-text span {
+
+        display: none;
+
+    }
+
+
+    .brand {
+
+        padding: 8px 10px;
+
+    }
+
+
+    .nav button {
+
+        padding:
+            8px 10px;
+
+    }
+
+
+    .year-badge {
+
+        top: 78px;
+        left: 12px;
+
+    }
+
+
+    .map-legend {
+
+        left: 12px;
+        bottom: 15px;
+
+    }
+
+
+    .slider-container {
+
+        width:
+            calc(100% - 24px);
+
+    }
+
+
+    .stats {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+
+    .data-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .brand-text strong {
+
+        font-size: 11px;
+
+    }
+
+
+    .nav button {
+
+        font-size: 9px;
+
+        padding:
+            8px 8px;
+
+    }
+
+
+    .stats {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .data-header {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOADING SCREEN
+     ===================================================== -->
+
+<div id="loader">
+
+    <div class="loader-mark">
+
+        <div class="loader-ring"></div>
+
+        <div class="loader-inner"></div>
+
+    </div>
+
+    <div class="loader-title">
+        Pakistan Polio Surveillance
+    </div>
+
+    <div class="loader-sub">
+        INITIALIZING SATELLITE SURVEILLANCE MAP
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAP
+     ===================================================== -->
+
+<div id="map"></div>
+
+<div class="map-vignette"></div>
+
+
+<!-- =====================================================
+     TOP BAR
+     ===================================================== -->
+
+<div class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            PS
+        </div>
+
+        <div class="brand-text">
+
+            <strong>
+                Pakistan Polio Surveillance
+            </strong>
+
+            <span>
+                DISTRICT DENSITY MONITOR
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="nav">
+
+        <button
+            id="mapButton"
+            class="active"
+            type="button"
+        >
+            MAP
+        </button>
+
+        <button
+            id="dataButton"
+            type="button"
+        >
+            DATA
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     YEAR DISPLAY
+     ===================================================== -->
+
+<div class="year-badge">
+
+    <div class="small">
+        Surveillance year
+    </div>
+
+    <div
+        class="year"
+        id="yearDisplay"
+    >
+        2024
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     LEGEND
+     ===================================================== -->
+
+<div class="map-legend">
+
+    <div class="legend-title">
+        Case density
+    </div>
+
+    <div class="legend-scale">
+
+        <span>
+            low
+        </span>
+
+        <div class="gradient"></div>
+
+        <span>
+            high
+        </span>
+
+    </div>
+
+    <div class="legend-labels">
+
+        <span>
+            0
+        </span>
+
+        <span>
+            cases
+        </span>
+
+        <span>
+            max
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SLIDER TRIGGER
+     ===================================================== -->
+
+<div class="slider-trigger"></div>
+
+
+<!-- =====================================================
+     SLIDER
+     ===================================================== -->
+
+<div class="slider-container">
+
+    <div class="slider-header">
+
+        <div
+            class="slider-year"
+            id="sliderYear"
+        >
+            2024
+        </div>
+
+        <div
+            class="slider-total"
+            id="sliderTotal"
+        >
+            0 cases
+        </div>
+
+    </div>
+
+
+    <input
+        type="range"
+        id="yearSlider"
+        min="0"
+        max="0"
+        value="0"
+        step="1"
+    >
+
+
+    <div
+        class="year-ticks"
+        id="yearTicks"
+    ></div>
+
+</div>
+
+
+<!-- =====================================================
+     DATA PANEL
+     ===================================================== -->
+
+<div id="dataPanel">
+
+    <div class="data-page">
+
+        <div class="data-header">
+
+            <div>
+
+                <h1>
+                    Surveillance Data
+                </h1>
+
+                <p>
+                    Explore, update and manage the district-level
+                    surveillance dataset.
+                </p>
+
+            </div>
+
+
+            <button
+                class="close-data"
+                id="closeData"
+                type="button"
+            >
+                ← Back to map
+            </button>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <div
+                    class="stat-number"
+                    id="dataTotalCases"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    TOTAL CASES
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div
+                    class="stat-number"
+                    id="dataDistricts"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    DISTRICTS REPORTING
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div
+                    class="stat-number"
+                    id="dataHighest"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    HIGHEST DISTRICT COUNT
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div
+                    class="stat-number"
+                    id="dataAverage"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    AVERAGE PER DISTRICT
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DATA CONTENT -->
+
+        <div class="data-grid">
+
+
+            <!-- TABLE -->
+
+            <div class="panel">
+
+                <h2>
+                    District reports
+                </h2>
+
+                <div class="panel-description">
+
+                    Reports for the currently selected year.
+                    The table updates automatically when the
+                    year on the map changes.
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    District
+                                </th>
+
+                                <th>
+                                    Province
+                                </th>
+
+                                <th>
+                                    Year
+                                </th>
+
+                                <th>
+                                    Cases
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody
+                            id="dataTable"
+                        ></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTROLS -->
+
+            <div class="panel">
+
+                <h2>
+                    Dataset
+                </h2>
+
+                <div class="panel-description">
+
+                    Replace the sample dataset with your own
+                    district-level records.
+
+                    <br><br>
+
+                    Format:
+
+                    <br>
+
+                    <span
+                        class="mono"
+                    >
+                        district,province,lat,lon,year,cases
+                    </span>
+
+                </div>
+
+
+                <textarea
+                    id="csvInput"
+                ></textarea>
+
+
+                <button
+                    class="action-button"
+                    id="applyData"
+                    type="button"
+                >
+                    APPLY DATA
+                </button>
+
+
+                <div
+                    id="dataMessage"
+                    class="help"
+                ></div>
+
+
+                <!-- GEOJSON -->
+
+                <div class="upload-box">
+
+                    <label
+                        class="upload-label"
+                    >
+                        District boundary map
+                    </label>
+
+
+                    <input
+                        type="file"
+                        id="geoJsonUpload"
+                        accept=".geojson,.json,application/geo+json,application/json"
+                    >
+
+
+                    <div class="help">
+
+                        Upload a Pakistan district GeoJSON file.
+                        Each district should have a name property
+                        such as <span class="mono">district</span>,
+                        <span class="mono">name</span>, or
+                        <span class="mono">NAME_3</span>.
+
+                        <br><br>
+
+                        Uploaded boundaries are shaded using
+                        the selected year's case density.
+
+                    </div>
+
+                    <div
+                        id="geoJsonStatus"
+                        class="help"
+                    >
+                        The permanent GeoJSON is loaded automatically.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     LEAFLET
+     ===================================================== -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<script>
+
+/* =========================================================
+   SAMPLE DATA
+   ========================================================= */
+
+const SAMPLE_CSV = `Karachi,Sindh,24.86,67.01,2019,2
+Hyderabad,Sindh,25.40,68.37,2019,1
+Quetta,Balochistan,30.18,66.99,2019,3
+Zhob,Balochistan,31.34,69.45,2019,4
+Jaffarabad,Balochistan,28.28,68.45,2019,2
+Peshawar,Khyber Pakhtunkhwa,34.01,71.58,2019,3
+Bannu,Khyber Pakhtunkhwa,32.99,70.60,2019,5
+North Waziristan,Khyber Pakhtunkhwa,33.00,70.07,2019,7
+D.I. Khan,Khyber Pakhtunkhwa,31.83,70.90,2019,6
+Lahore,Punjab,31.55,74.34,2019,1
+Multan,Punjab,30.20,71.47,2019,1
+
+Karachi,Sindh,24.86,67.01,2020,1
+Larkana,Sindh,27.56,68.21,2020,2
+Quetta,Balochistan,30.18,66.99,2020,4
+Qilla Abdullah,Balochistan,30.73,66.58,2020,3
+Peshawar,Khyber Pakhtunkhwa,34.01,71.58,2020,2
+Bannu,Khyber Pakhtunkhwa,32.99,70.60,2020,4
+North Waziristan,Khyber Pakhtunkhwa,33.00,70.07,2020,6
+South Waziristan,Khyber Pakhtunkhwa,32.30,69.57,2020,3
+Lakki Marwat,Khyber Pakhtunkhwa,32.61,70.91,2020,2
+
+Karachi,Sindh,24.86,67.01,2021,1
+Quetta,Balochistan,30.18,66.99,2021,2
+Jaffarabad,Balochistan,28.28,68.45,2021,3
+North Waziristan,Khyber Pakhtunkhwa,33.00,70.07,2021,5
+D.I. Khan,Khyber Pakhtunkhwa,31.83,70.90,2021,4
+Khyber,Khyber Pakhtunkhwa,33.94,71.29,2021,2
+Lahore,Punjab,31.55,74.34,2021,1
+
+Sukkur,Sindh,27.70,68.86,2022,1
+Quetta,Balochistan,30.18,66.99,2022,3
+Zhob,Balochistan,31.34,69.45,2022,2
+North Waziristan,Khyber Pakhtunkhwa,33.00,70.07,2022,3
+Bannu,Khyber Pakhtunkhwa,32.99,70.60,2022,2
+D.I. Khan,Khyber Pakhtunkhwa,31.83,70.90,2022,2
+
+Karachi,Sindh,24.86,67.01,2023,1
+Jaffarabad,Balochistan,28.28,68.45,2023,3
+Zhob,Balochistan,31.34,69.45,2023,3
+D.I. Khan,Khyber Pakhtunkhwa,31.83,70.90,2023,6
+North Waziristan,Khyber Pakhtunkhwa,33.00,70.07,2023,2
+Islamabad,Federal,33.72,73.06,2023,1
+
+North Waziristan,Khyber Pakhtunkhwa,33.00,70.07,2024,8
+Lakki Marwat,Khyber Pakhtunkhwa,32.61,70.91,2024,4
+D.I. Khan,Khyber Pakhtunkhwa,31.83,70.90,2024,3
+Karachi,Sindh,24.86,67.01,2024,2
+Multan,Punjab,30.20,71.47,2024,1
+Gilgit,Gilgit-Baltistan,35.92,74.31,2024,1`;
+
+
+/* =========================================================
+   APPLICATION STATE
+   ========================================================= */
+
+let rows = [];
+
+let years = [];
+
+let selectedYear = 2024;
+
+let districtLayer = null;
+
+let caseLayer = null;
+
+let caseLocations = [];
+
+let map;
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const loader =
+    document.getElementById("loader");
+
+const yearSlider =
+    document.getElementById("yearSlider");
+
+const yearDisplay =
+    document.getElementById("yearDisplay");
+
+const sliderYear =
+    document.getElementById("sliderYear");
+
+const sliderTotal =
+    document.getElementById("sliderTotal");
+
+const yearTicks =
+    document.getElementById("yearTicks");
+
+const dataPanel =
+    document.getElementById("dataPanel");
+
+const dataButton =
+    document.getElementById("dataButton");
+
+const mapButton =
+    document.getElementById("mapButton");
+
+const closeData =
+    document.getElementById("closeData");
+
+const dataTable =
+    document.getElementById("dataTable");
+
+
+/* =========================================================
+   PARSE CSV
+   ========================================================= */
+
+function parseCSV(text) {
+
+    return text
+
+        .split(/\r?\n/)
+
+        .map(
+            line =>
+                line.trim()
+        )
+
+        .filter(Boolean)
+
+        .map(line => {
+
+            const parts =
+                line
+                    .split(",")
+                    .map(
+                        value =>
+                            value.trim()
+                    );
+
+
+            if (parts.length < 6) {
+
+                return null;
+
+            }
+
+
+            return {
+
+                district:
+                    parts[0],
+
+                province:
+                    parts[1],
+
+                lat:
+                    parseFloat(parts[2]),
+
+                lon:
+                    parseFloat(parts[3]),
+
+                year:
+                    parseInt(parts[4]),
+
+                cases:
+                    parseInt(parts[5])
+
+            };
+
+        })
+
+        .filter(
+            row =>
+                row &&
+                !isNaN(row.lat) &&
+                !isNaN(row.lon) &&
+                !isNaN(row.year) &&
+                !isNaN(row.cases)
+        );
+
+}
+
+
+/* =========================================================
+   NORMALIZE DISTRICT
+   ========================================================= */
+
+function normalizeDistrict(name) {
+
+    return String(name || "")
+
+        .toLowerCase()
+
+        .trim()
+
+        .replace(
+            /&/g,
+            "and"
+        )
+
+        .replace(
+            /[^a-z0-9]/g,
+            ""
+        );
+
+}
+
+
+/* =========================================================
+   LOAD DATA
+   ========================================================= */
+
+function loadData(csv) {
+
+    rows =
+        parseCSV(csv);
+
+
+    years =
+        [
+            ...new Set(
+                rows.map(
+                    row =>
+                        row.year
+                )
+            )
+        ]
+        .sort(
+            (a,b) =>
+                a - b
+        );
+
+
+    if (!years.length) {
+
+        return;
+
+    }
+
+
+    yearSlider.min = 0;
+
+    yearSlider.max =
+        years.length - 1;
+
+    yearSlider.value =
+        years.length - 1;
+
+
+    selectedYear =
+        years[
+            years.length - 1
+        ];
+
+
+    yearTicks.innerHTML =
+        years
+            .map(
+                year =>
+                    `<span>${year}</span>`
+            )
+            .join("");
+
+
+    updateMap();
+
+    updateDataPanel();
+
+}
+
+
+/* =========================================================
+   PERMANENT CASE LOCATION CSV
+   ========================================================= */
+
+function parseCaseLocationsCSV(text) {
+
+    const lines =
+        text
+            .split(/\r?\n/)
+            .map(line => line.trim())
+            .filter(Boolean);
+
+    if (lines.length < 2) {
+        return [];
+    }
+
+    const header =
+        lines[0]
+            .split(",")
+            .map(value => value.trim().toLowerCase());
+
+    const index = name => header.indexOf(name);
+
+    const caseIdIndex = index("case_id");
+    const districtIndex = index("district");
+    const provinceIndex = index("province");
+    const latitudeIndex = index("latitude");
+    const longitudeIndex = index("longitude");
+    const yearIndex = index("year");
+
+    if (
+        districtIndex === -1 ||
+        provinceIndex === -1 ||
+        latitudeIndex === -1 ||
+        longitudeIndex === -1 ||
+        yearIndex === -1
+    ) {
+        throw new Error(
+            "Case CSV must contain district, province, latitude, longitude and year columns."
+        );
+    }
+
+    return lines
+        .slice(1)
+        .map(line => {
+
+            const parts =
+                line.split(",").map(value => value.trim());
+
+            const latitude =
+                parseFloat(parts[latitudeIndex]);
+
+            const longitude =
+                parseFloat(parts[longitudeIndex]);
+
+            const year =
+                parseInt(parts[yearIndex]);
+
+            if (
+                !parts[districtIndex] ||
+                !parts[provinceIndex] ||
+                isNaN(latitude) ||
+                isNaN(longitude) ||
+                isNaN(year)
+            ) {
+                return null;
+            }
+
+            return {
+                caseId:
+                    caseIdIndex >= 0
+                        ? parts[caseIdIndex]
+                        : "CASE-" + Math.random().toString(36).slice(2),
+
+                district:
+                    parts[districtIndex],
+
+                province:
+                    parts[provinceIndex],
+
+                lat:
+                    latitude,
+
+                lon:
+                    longitude,
+
+                year:
+                    year
+            };
+
+        })
+        .filter(Boolean);
+
+}
+
+
+function loadCaseLocationData(text) {
+
+    caseLocations =
+        parseCaseLocationsCSV(text);
+
+    const aggregate = {};
+
+    caseLocations.forEach(caseRecord => {
+
+        const key =
+            `${normalizeDistrict(caseRecord.district)}|${caseRecord.year}`;
+
+        if (!aggregate[key]) {
+
+            aggregate[key] = {
+
+                district:
+                    caseRecord.district,
+
+                province:
+                    caseRecord.province,
+
+                lat:
+                    caseRecord.lat,
+
+                lon:
+                    caseRecord.lon,
+
+                year:
+                    caseRecord.year,
+
+                cases:
+                    0
+
+            };
+
+        }
+
+        aggregate[key].cases += 1;
+
+    });
+
+    rows =
+        Object.values(aggregate);
+
+    years =
+        [...new Set(
+            rows.map(
+                row => row.year
+            )
+        )]
+        .sort(
+            (a,b) => a-b
+        );
+
+    if (!years.length) {
+        return;
+    }
+
+    yearSlider.min = 0;
+    yearSlider.max = years.length - 1;
+    yearSlider.value = years.length - 1;
+    selectedYear = years[years.length - 1];
+
+    yearTicks.innerHTML =
+        years
+            .map(
+                year => `<span>${year}</span>`
+            )
+            .join("");
+
+    updateCaseMarkers();
+    updateMap();
+    updateDataPanel();
+
+}
+
+
+function loadPermanentCaseLocations() {
+
+    fetch("polio_case_locations_fake.csv")
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error(
+                    "Could not load polio_case_locations_fake.csv"
+                );
+            }
+
+            return response.text();
+
+        })
+
+        .then(csv => {
+
+            loadCaseLocationData(csv);
+
+            console.log(
+                `Loaded ${caseLocations.length} synthetic case locations.`
+            );
+
+            const message =
+                document.getElementById("dataMessage");
+
+            if (message) {
+                message.textContent =
+                    `Loaded ${caseLocations.length} synthetic case locations.`;
+                message.style.color = "#8fc8ea";
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Case CSV loading error:",
+                error
+            );
+
+            const message =
+                document.getElementById("dataMessage");
+
+            if (message) {
+                message.textContent =
+                    "Could not load the case-location CSV.";
+                message.style.color = "#e59b9b";
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   CASE LOCATION MARKERS
+   ========================================================= */
+
+function updateCaseMarkers() {
+
+    if (!map) {
+        return;
+    }
+
+    if (caseLayer) {
+        map.removeLayer(caseLayer);
+    }
+
+    caseLayer =
+        L.layerGroup();
+
+    caseLocations
+        .filter(
+            caseRecord =>
+                caseRecord.year === selectedYear
+        )
+        .forEach(caseRecord => {
+
+            const marker =
+                L.circleMarker(
+                    [
+                        caseRecord.lat,
+                        caseRecord.lon
+                    ],
+                    {
+                        radius: 5,
+                        stroke: false,
+                        color: "#0d3b66",
+                        weight: 0,
+                        fillColor: "#0d3b66",
+                        fillOpacity: 1
+                    }
+                );
+
+            marker.addTo(caseLayer);
+
+        });
+
+    caseLayer.addTo(map);
+
+}
+
+
+/* =========================================================
+   GET SELECTED DATA
+   ========================================================= */
+
+function selectedRows() {
+
+    return rows.filter(
+        row =>
+            row.year ===
+            selectedYear
+    );
+
+}
+
+
+/* =========================================================
+   GET DISTRICT CASES
+   ========================================================= */
+
+function districtCases() {
+
+    const result = {};
+
+    selectedRows()
+        .forEach(row => {
+
+            const key =
+                normalizeDistrict(
+                    row.district
+                );
+
+
+            if (!result[key]) {
+
+                result[key] = {
+
+                    name:
+                        row.district,
+
+                    province:
+                        row.province,
+
+                    cases:
+                        0
+
+                };
+
+            }
+
+
+            result[key].cases +=
+                row.cases;
+
+        });
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   COLOR INTERPOLATION
+   ========================================================= */
+
+function hexToRgb(hex) {
+
+    hex =
+        hex.replace(
+            "#",
+            ""
+        );
+
+
+    return {
+
+        r:
+            parseInt(
+                hex.substring(0,2),
+                16
+            ),
+
+        g:
+            parseInt(
+                hex.substring(2,4),
+                16
+            ),
+
+        b:
+            parseInt(
+                hex.substring(4,6),
+                16
+            )
+
+    };
+
+}
+
+
+function rgbToHex(r,g,b) {
+
+    return "#" +
+
+        [
+            r,
+            g,
+            b
+        ]
+
+        .map(
+            value =>
+                Math.round(value)
+                    .toString(16)
+                    .padStart(2,"0")
+        )
+
+        .join("");
+
+}
+
+
+function interpolateColor(
+    start,
+    end,
+    amount
+) {
+
+    const a =
+        hexToRgb(start);
+
+    const b =
+        hexToRgb(end);
+
+
+    return rgbToHex(
+
+        a.r +
+        (
+            b.r -
+            a.r
+        ) *
+        amount,
+
+        a.g +
+        (
+            b.g -
+            a.g
+        ) *
+        amount,
+
+        a.b +
+        (
+            b.b -
+            a.b
+        ) *
+        amount
+
+    );
+
+}
+
+
+/* =========================================================
+   DENSITY COLOR
+   ========================================================= */
+
+function densityColor(
+    cases,
+    max
+) {
+
+    if (
+        !cases ||
+        cases <= 0
+    ) {
+
+        return "#dceff9";
+
+    }
+
+
+    if (!max) {
+
+        return "#dceff9";
+
+    }
+
+
+    const intensity =
+        Math.sqrt(
+            cases / max
+        );
+
+
+    return interpolateColor(
+        "#dceff9",
+        "#0d3b66",
+        intensity
+    );
+
+}
+
+
+/* =========================================================
+   INITIALIZE MAP
+   ========================================================= */
+
+function initializeMap() {
+
+    map =
+        L.map(
+            "map",
+            {
+
+                zoomControl:
+                    true,
+
+                attributionControl:
+                    true
+
+            }
+        );
+
+
+    /*
+       Pakistan initial view.
+    */
+
+    map.setView(
+        [
+            30.5,
+            69.3
+        ],
+        5
+    );
+
+
+    /*
+       Satellite imagery.
+       Esri World Imagery is used as the
+       satellite base layer.
+    */
+
+    const satellite =
+        L.tileLayer(
+
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+
+            {
+
+                maxZoom:
+                    18,
+
+                attribution:
+                    "Tiles © Esri"
+
+            }
+
+        );
+
+
+    satellite.addTo(map);
+
+
+    /*
+       Add a subtle dark layer over the
+       satellite imagery so blue density
+       colors remain visible.
+    */
+
+    L.tileLayer(
+
+        "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+
+        {
+
+            opacity:
+                0.18,
+
+            maxZoom:
+                19,
+
+            attribution:
+                "&copy; CARTO"
+
+        }
+
+    ).addTo(map);
+
+
+    /*
+       Pakistan center marker is not used.
+       The map remains visually clean.
+    */
+
+}
+
+
+/* =========================================================
+   GEOJSON STYLE
+   ========================================================= */
+
+function styleDistrict(
+    feature
+) {
+
+    const properties =
+        feature.properties ||
+        {};
+
+
+    const district =
+        properties.district ||
+        properties.DISTRICT ||
+        properties.name ||
+        properties.NAME ||
+        properties.NAME_3 ||
+        properties.DIST_NAME ||
+        "";
+
+
+    const casesData =
+        districtCases();
+
+
+    const key =
+        normalizeDistrict(
+            district
+        );
+
+
+    const values =
+        Object.values(
+            casesData
+        );
+
+
+    const max =
+        values.length
+
+            ? Math.max(
+                ...values.map(
+                    item =>
+                        item.cases
+                )
+            )
+
+            : 0;
+
+
+    const record =
+        casesData[key];
+
+
+    return {
+
+        fillColor:
+            densityColor(
+                record
+                    ? record.cases
+                    : 0,
+                max
+            ),
+
+        fillOpacity:
+            record
+                ? 0.00
+                : 0.00,
+
+        color:
+            "rgba(255,255,255,.75)",
+
+        weight:
+            0.0
+
+    };
+
+}
+
+
+/* =========================================================
+   GEOJSON TOOLTIP
+   ========================================================= */
+
+function onEachDistrict(
+    feature,
+    layer
+) {
+
+    const properties =
+        feature.properties ||
+        {};
+
+
+    const district =
+        properties.district ||
+        properties.DISTRICT ||
+        properties.name ||
+        properties.NAME ||
+        properties.NAME_3 ||
+        properties.DIST_NAME ||
+        "Unknown district";
+
+
+    const casesData =
+        districtCases();
+
+
+    const record =
+        casesData[
+            normalizeDistrict(
+                district
+            )
+        ];
+
+
+    const cases =
+        record
+            ? record.cases
+            : 0;
+
+
+    const province =
+        record
+            ? record.province
+            : "";
+
+
+    layer.bindTooltip(
+
+        `
+            <strong>
+                ${escapeHtml(district)}
+            </strong>
+
+            ${
+                province
+                    ? `<br>${escapeHtml(province)}`
+                    : ""
+            }
+
+            <br>
+
+            Cases:
+            <strong>
+                ${cases}
+            </strong>
+
+        `,
+
+        {
+
+            sticky:
+                true,
+
+            direction:
+                "top",
+
+            className:
+                "district-tooltip"
+
+        }
+
+    );
+
+
+    layer.on({
+
+        mouseover:
+            event => {
+
+                event.target.setStyle({
+
+                    weight:
+                        2,
+
+                    color:
+                        "#ffffff",
+
+                    fillOpacity:
+                        0.86
+
+                });
+
+            },
+
+
+        mouseout:
+            event => {
+
+                districtLayer.resetStyle(
+                    event.target
+                );
+
+            }
+
+    });
+
+}
+
+
+/* =========================================================
+   LOAD GEOJSON
+   ========================================================= */
+
+function loadGeoJSON(
+    geojson
+) {
+
+    if (districtLayer) {
+
+        map.removeLayer(
+            districtLayer
+        );
+
+        districtLayer =
+            null;
+
+    }
+
+
+    districtLayer =
+        L.geoJSON(
+
+            geojson,
+
+            {
+
+                style:
+                    styleDistrict,
+
+                onEachFeature:
+                    onEachDistrict
+
+            }
+
+        );
+
+
+    districtLayer.addTo(
+        map
+    );
+
+
+    try {
+
+        map.fitBounds(
+            districtLayer.getBounds(),
+            {
+
+                padding:
+                    [60,60],
+
+                maxZoom:
+                    7
+
+            }
+        );
+
+    }
+
+    catch(error) {
+
+        console.warn(
+            "Could not fit GeoJSON bounds.",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE MAP
+   ========================================================= */
+
+function updateMap() {
+
+    if (!map) {
+
+        return;
+
+    }
+
+
+    if (districtLayer) {
+
+        districtLayer.setStyle(
+            styleDistrict
+        );
+
+    }
+
+
+    const current =
+        selectedRows();
+
+
+    const total =
+        current.reduce(
+            (
+                sum,
+                row
+            ) =>
+                sum +
+                row.cases,
+
+            0
+        );
+
+
+    yearDisplay.textContent =
+        selectedYear;
+
+
+    sliderYear.textContent =
+        selectedYear;
+
+
+    sliderTotal.textContent =
+        `${total} case${total === 1 ? "" : "s"}`;
+
+}
+
+
+/* =========================================================
+   UPDATE DATA PANEL
+   ========================================================= */
+
+function updateDataPanel() {
+
+    const current =
+        selectedRows();
+
+
+    const total =
+        current.reduce(
+            (
+                sum,
+                row
+            ) =>
+                sum +
+                row.cases,
+
+            0
+        );
+
+
+    const districtCount =
+        new Set(
+            current.map(
+                row =>
+                    normalizeDistrict(
+                        row.district
+                    )
+            )
+        ).size;
+
+
+    const highest =
+        current.length
+            ? Math.max(
+                ...current.map(
+                    row =>
+                        row.cases
+                )
+            )
+            : 0;
+
+
+    const average =
+        current.length
+            ? (
+                total /
+                current.length
+            ).toFixed(1)
+
+            : "0.0";
+
+
+    document.getElementById(
+        "dataTotalCases"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "dataDistricts"
+    ).textContent =
+        districtCount;
+
+
+    document.getElementById(
+        "dataHighest"
+    ).textContent =
+        highest;
+
+
+    document.getElementById(
+        "dataAverage"
+    ).textContent =
+        average;
+
+
+    const sorted =
+        [
+            ...current
+        ]
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.cases -
+                a.cases
+        );
+
+
+    dataTable.innerHTML =
+        sorted
+            .map(
+                row => `
+
+                    <tr>
+
+                        <td>
+                            ${escapeHtml(
+                                row.district
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                row.province
+                            )}
+                        </td>
+
+                        <td>
+                            ${row.year}
+                        </td>
+
+                        <td>
+                            ${row.cases}
+                        </td>
+
+                    </tr>
+
+                `
+            )
+            .join("");
+
+
+}
+
+
+/* =========================================================
+   YEAR SLIDER
+   ========================================================= */
+
+yearSlider.addEventListener(
+    "input",
+    function() {
+
+        selectedYear =
+            years[
+                Number(
+                    yearSlider.value
+                )
+            ];
+
+
+        updateCaseMarkers();
+
+        updateMap();
+
+        updateDataPanel();
+
+    }
+);
+
+
+/* =========================================================
+   DATA PANEL OPEN
+   ========================================================= */
+
+function openDataPanel() {
+
+    dataPanel.classList.add(
+        "open"
+    );
+
+
+    dataButton.classList.add(
+        "active"
+    );
+
+
+    mapButton.classList.remove(
+        "active"
+    );
+
+
+    updateDataPanel();
+
+}
+
+
+/* =========================================================
+   DATA PANEL CLOSE
+   ========================================================= */
+
+function closeDataPanel() {
+
+    dataPanel.classList.remove(
+        "open"
+    );
+
+
+    mapButton.classList.add(
+        "active"
+    );
+
+
+    dataButton.classList.remove(
+        "active"
+    );
+
+
+    setTimeout(
+        () => {
+
+            map.invalidateSize();
+
+        },
+
+        450
+    );
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+dataButton.addEventListener(
+    "click",
+    openDataPanel
+);
+
+
+closeData.addEventListener(
+    "click",
+    closeDataPanel
+);
+
+
+mapButton.addEventListener(
+    "click",
+    closeDataPanel
+);
+
+
+/* =========================================================
+   APPLY CSV DATA
+   ========================================================= */
+
+document.getElementById(
+    "applyData"
+).addEventListener(
+    "click",
+    function() {
+
+        const input =
+            document.getElementById(
+                "csvInput"
+            );
+
+
+        const message =
+            document.getElementById(
+                "dataMessage"
+            );
+
+
+        try {
+
+            const parsed =
+                parseCSV(
+                    input.value
+                );
+
+
+            if (!parsed.length) {
+
+                throw new Error(
+                    "No valid rows."
+                );
+
+            }
+
+
+            rows =
+                parsed;
+
+
+            years =
+                [
+                    ...new Set(
+                        rows.map(
+                            row =>
+                                row.year
+                        )
+                    )
+                ]
+                .sort(
+                    (a,b) =>
+                        a-b
+                );
+
+
+            yearSlider.max =
+                years.length - 1;
+
+
+            yearSlider.value =
+                years.length - 1;
+
+
+            selectedYear =
+                years[
+                    years.length - 1
+                ];
+
+
+            yearTicks.innerHTML =
+                years
+                    .map(
+                        year =>
+                            `<span>${year}</span>`
+                    )
+                    .join("");
+
+
+            updateMap();
+
+            updateDataPanel();
+
+
+            message.textContent =
+                `Applied ${rows.length} records across ${years.length} years.`;
+
+            message.style.color =
+                "#8fc8ea";
+
+        }
+
+        catch(error) {
+
+            message.textContent =
+                "Could not read the dataset. Check the CSV format.";
+
+            message.style.color =
+                "#e59b9b";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   GEOJSON UPLOAD
+   ========================================================= */
+
+document.getElementById(
+    "geoJsonUpload"
+).addEventListener(
+    "change",
+    function(event) {
+
+        const file =
+            event.target.files[0];
+
+
+        if (!file) {
+
+            return;
+
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function() {
+
+                try {
+
+                    const geojson =
+                        JSON.parse(
+                            reader.result
+                        );
+
+
+                    loadGeoJSON(
+                        geojson
+                    );
+
+
+                    document.getElementById(
+                        "dataMessage"
+                    ).textContent =
+                        `Loaded ${file.name}.`;
+
+
+                    document.getElementById(
+                        "dataMessage"
+                    ).style.color =
+                        "#8fc8ea";
+
+                }
+
+                catch(error) {
+
+                    document.getElementById(
+                        "dataMessage"
+                    ).textContent =
+                        "Invalid GeoJSON file.";
+
+                    document.getElementById(
+                        "dataMessage"
+                    ).style.color =
+                        "#e59b9b";
+
+                }
+
+            };
+
+
+        reader.readAsText(
+            file
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PERMANENT GEOJSON
+   ========================================================= */
+
+function loadPermanentGeoJSON() {
+
+    fetch("index.geojson")
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error(
+                    "Could not load pakistan-districts.geojson"
+                );
+            }
+
+            return response.json();
+
+        })
+
+        .then(geojson => {
+
+            loadGeoJSON(geojson);
+
+            const status =
+                document.getElementById("geoJsonStatus");
+
+            if (status) {
+                status.textContent =
+                    "District boundaries loaded automatically.";
+                status.style.color = "#8fc8ea";
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "GeoJSON loading error:",
+                error
+            );
+
+            const status =
+                document.getElementById("geoJsonStatus");
+
+            if (status) {
+                status.textContent =
+                    "Could not load pakistan-districts.geojson.";
+                status.style.color = "#e59b9b";
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(
+    value
+) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        /*
+           Start map.
+        */
+
+        initializeMap();
+
+
+        /*
+           Load permanent district boundaries.
+        */
+
+        loadPermanentGeoJSON();
+
+
+        /*
+           Load permanent case-location CSV.
+        */
+
+        loadPermanentCaseLocations();
+
+
+        /*
+           Keep the sample CSV visible in the
+           manual data editor as a fallback.
+        */
+
+        document.getElementById(
+            "csvInput"
+        ).value =
+            SAMPLE_CSV;
+
+
+        /*
+           Give satellite tiles a moment
+           to initialize before removing
+           the loading screen.
+        */
+
+        setTimeout(
+            function() {
+
+                loader.classList.add(
+                    "hidden"
+                );
+
+            },
+
+            1200
+        );
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

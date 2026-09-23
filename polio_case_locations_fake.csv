@@ -1,0 +1,51 @@
+case_id,district,province,latitude,longitude,year
+FAKE-001,North Waziristan,Khyber Pakhtunkhwa,33.0,70.07,2019
+FAKE-002,North Waziristan,Khyber Pakhtunkhwa,33.025,70.11,2019
+FAKE-003,D.I. Khan,Khyber Pakhtunkhwa,31.833,70.9,2019
+FAKE-004,Lakki Marwat,Khyber Pakhtunkhwa,32.61,70.91,2019
+FAKE-005,Karachi,Sindh,24.86,67.01,2019
+FAKE-006,Quetta,Balochistan,30.18,66.975,2019
+FAKE-007,Jaffarabad,Balochistan,28.28,68.45,2020
+FAKE-008,Zhob,Balochistan,31.34,69.45,2020
+FAKE-009,D.I. Khan,Khyber Pakhtunkhwa,31.85,70.92,2020
+FAKE-010,North Waziristan,Khyber Pakhtunkhwa,33.01,70.06,2020
+FAKE-011,Karachi,Sindh,24.875,67.025,2020
+FAKE-012,Peshawar,Khyber Pakhtunkhwa,34.015,71.525,2020
+FAKE-013,Multan,Punjab,30.2,71.47,2021
+FAKE-014,Lahore,Punjab,31.52,74.358,2021
+FAKE-015,North Waziristan,Khyber Pakhtunkhwa,33.03,70.09,2021
+FAKE-016,D.I. Khan,Khyber Pakhtunkhwa,31.81,70.88,2021
+FAKE-017,Lakki Marwat,Khyber Pakhtunkhwa,32.625,70.895,2021
+FAKE-018,Quetta,Balochistan,30.19,66.96,2021
+FAKE-019,Karachi,Sindh,24.845,67.035,2021
+FAKE-020,Gilgit,Gilgit-Baltistan,35.92,74.31,2021
+FAKE-021,North Waziristan,Khyber Pakhtunkhwa,32.99,70.04,2022
+FAKE-022,North Waziristan,Khyber Pakhtunkhwa,33.04,70.08,2022
+FAKE-023,D.I. Khan,Khyber Pakhtunkhwa,31.84,70.91,2022
+FAKE-024,Lakki Marwat,Khyber Pakhtunkhwa,32.6,70.93,2022
+FAKE-025,Karachi,Sindh,24.87,67.0,2022
+FAKE-026,Jaffarabad,Balochistan,28.3,68.43,2022
+FAKE-027,Zhob,Balochistan,31.36,69.47,2022
+FAKE-028,Peshawar,Khyber Pakhtunkhwa,34.025,71.51,2022
+FAKE-029,North Waziristan,Khyber Pakhtunkhwa,33.015,70.055,2023
+FAKE-030,North Waziristan,Khyber Pakhtunkhwa,33.045,70.1,2023
+FAKE-031,North Waziristan,Khyber Pakhtunkhwa,32.98,70.07,2023
+FAKE-032,D.I. Khan,Khyber Pakhtunkhwa,31.83,70.9,2023
+FAKE-033,D.I. Khan,Khyber Pakhtunkhwa,31.86,70.94,2023
+FAKE-034,Jaffarabad,Balochistan,28.28,68.45,2023
+FAKE-035,Jaffarabad,Balochistan,28.3,68.47,2023
+FAKE-036,Zhob,Balochistan,31.34,69.45,2023
+FAKE-037,Karachi,Sindh,24.86,67.01,2023
+FAKE-038,Islamabad,Federal,33.72,73.06,2023
+FAKE-039,North Waziristan,Khyber Pakhtunkhwa,33.0,70.07,2024
+FAKE-040,North Waziristan,Khyber Pakhtunkhwa,33.02,70.09,2024
+FAKE-041,North Waziristan,Khyber Pakhtunkhwa,32.98,70.05,2024
+FAKE-042,North Waziristan,Khyber Pakhtunkhwa,33.04,70.11,2024
+FAKE-043,Lakki Marwat,Khyber Pakhtunkhwa,32.61,70.91,2024
+FAKE-044,Lakki Marwat,Khyber Pakhtunkhwa,32.63,70.93,2024
+FAKE-045,D.I. Khan,Khyber Pakhtunkhwa,31.83,70.9,2024
+FAKE-046,D.I. Khan,Khyber Pakhtunkhwa,31.85,70.92,2024
+FAKE-047,Karachi,Sindh,24.86,67.01,2024
+FAKE-048,Karachi,Sindh,24.88,67.03,2024
+FAKE-049,Multan,Punjab,30.2,71.47,2024
+FAKE-050,Gilgit,Gilgit-Baltistan,35.92,74.31,2024

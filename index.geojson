@@ -1,0 +1,846 @@
+{
+  "type": "FeatureCollection",
+  "name": "pakistan_fake_districts_demo",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Karachi Central",
+        "province": "Sindh",
+        "name": "Karachi Central"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              66.71,
+              24.529999999999998
+            ],
+            [
+              67.39,
+              24.529999999999998
+            ],
+            [
+              67.39,
+              25.37
+            ],
+            [
+              66.71,
+              25.37
+            ],
+            [
+              66.71,
+              24.529999999999998
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Karachi East",
+        "province": "Sindh",
+        "name": "Karachi East"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              66.80000000000001,
+              24.52
+            ],
+            [
+              67.44,
+              24.52
+            ],
+            [
+              67.44,
+              25.279999999999998
+            ],
+            [
+              66.80000000000001,
+              25.279999999999998
+            ],
+            [
+              66.80000000000001,
+              24.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Karachi South",
+        "province": "Sindh",
+        "name": "Karachi South"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              66.74,
+              24.46
+            ],
+            [
+              67.3,
+              24.46
+            ],
+            [
+              67.3,
+              25.18
+            ],
+            [
+              66.74,
+              25.18
+            ],
+            [
+              66.74,
+              24.46
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Karachi West",
+        "province": "Sindh",
+        "name": "Karachi West"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              66.52000000000001,
+              24.52
+            ],
+            [
+              67.28,
+              24.52
+            ],
+            [
+              67.28,
+              25.48
+            ],
+            [
+              66.52000000000001,
+              25.48
+            ],
+            [
+              66.52000000000001,
+              24.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Hyderabad",
+        "province": "Sindh",
+        "name": "Hyderabad"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              67.96,
+              24.9
+            ],
+            [
+              68.8,
+              24.9
+            ],
+            [
+              68.8,
+              25.9
+            ],
+            [
+              67.96,
+              25.9
+            ],
+            [
+              67.96,
+              24.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Sukkur",
+        "province": "Sindh",
+        "name": "Sukkur"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.42999999999999,
+              27.24
+            ],
+            [
+              69.27,
+              27.24
+            ],
+            [
+              69.27,
+              28.2
+            ],
+            [
+              68.42999999999999,
+              28.2
+            ],
+            [
+              68.42999999999999,
+              27.24
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Larkana",
+        "province": "Sindh",
+        "name": "Larkana"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              67.78999999999999,
+              27.08
+            ],
+            [
+              68.63,
+              27.08
+            ],
+            [
+              68.63,
+              28.04
+            ],
+            [
+              67.78999999999999,
+              28.04
+            ],
+            [
+              67.78999999999999,
+              27.08
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Quetta",
+        "province": "Balochistan",
+        "name": "Quetta"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              66.54,
+              29.66
+            ],
+            [
+              67.42,
+              29.66
+            ],
+            [
+              67.42,
+              30.7
+            ],
+            [
+              66.54,
+              30.7
+            ],
+            [
+              66.54,
+              29.66
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Zhob",
+        "province": "Balochistan",
+        "name": "Zhob"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.99000000000001,
+              30.82
+            ],
+            [
+              69.91,
+              30.82
+            ],
+            [
+              69.91,
+              31.86
+            ],
+            [
+              68.99000000000001,
+              31.86
+            ],
+            [
+              68.99000000000001,
+              30.82
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Jaffarabad",
+        "province": "Balochistan",
+        "name": "Jaffarabad"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              67.99000000000001,
+              27.76
+            ],
+            [
+              68.87,
+              27.76
+            ],
+            [
+              68.87,
+              28.8
+            ],
+            [
+              67.99000000000001,
+              28.8
+            ],
+            [
+              67.99000000000001,
+              27.76
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Gwadar",
+        "province": "Balochistan",
+        "name": "Gwadar"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              61.91,
+              24.55
+            ],
+            [
+              62.75,
+              24.55
+            ],
+            [
+              62.75,
+              25.709999999999997
+            ],
+            [
+              61.91,
+              25.709999999999997
+            ],
+            [
+              61.91,
+              24.55
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Peshawar",
+        "province": "Khyber Pakhtunkhwa",
+        "name": "Peshawar"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.2,
+              33.540000000000006
+            ],
+            [
+              71.96,
+              33.540000000000006
+            ],
+            [
+              71.96,
+              34.5
+            ],
+            [
+              71.2,
+              34.5
+            ],
+            [
+              71.2,
+              33.540000000000006
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Bannu",
+        "province": "Khyber Pakhtunkhwa",
+        "name": "Bannu"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.19999999999999,
+              32.510000000000005
+            ],
+            [
+              71.0,
+              32.510000000000005
+            ],
+            [
+              71.0,
+              33.47
+            ],
+            [
+              70.19999999999999,
+              33.47
+            ],
+            [
+              70.19999999999999,
+              32.510000000000005
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "D.I. Khan",
+        "province": "Khyber Pakhtunkhwa",
+        "name": "D.I. Khan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.46000000000001,
+              31.31
+            ],
+            [
+              71.34,
+              31.31
+            ],
+            [
+              71.34,
+              32.35
+            ],
+            [
+              70.46000000000001,
+              32.35
+            ],
+            [
+              70.46000000000001,
+              31.31
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "North Waziristan",
+        "province": "Khyber Pakhtunkhwa",
+        "name": "North Waziristan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              69.83,
+              32.459999999999994
+            ],
+            [
+              70.67,
+              32.459999999999994
+            ],
+            [
+              70.67,
+              33.5
+            ],
+            [
+              69.83,
+              33.5
+            ],
+            [
+              69.83,
+              32.459999999999994
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Lahore",
+        "province": "Punjab",
+        "name": "Lahore"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.97,
+              31.06
+            ],
+            [
+              74.72999999999999,
+              31.06
+            ],
+            [
+              74.72999999999999,
+              31.98
+            ],
+            [
+              73.97,
+              31.98
+            ],
+            [
+              73.97,
+              31.06
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Faisalabad",
+        "province": "Punjab",
+        "name": "Faisalabad"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.66,
+              30.92
+            ],
+            [
+              73.5,
+              30.92
+            ],
+            [
+              73.5,
+              31.92
+            ],
+            [
+              72.66,
+              31.92
+            ],
+            [
+              72.66,
+              30.92
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Multan",
+        "province": "Punjab",
+        "name": "Multan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.03,
+              29.68
+            ],
+            [
+              71.91,
+              29.68
+            ],
+            [
+              71.91,
+              30.72
+            ],
+            [
+              71.03,
+              30.72
+            ],
+            [
+              71.03,
+              29.68
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Rawalpindi",
+        "province": "Punjab",
+        "name": "Rawalpindi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.64999999999999,
+              33.120000000000005
+            ],
+            [
+              73.45,
+              33.120000000000005
+            ],
+            [
+              73.45,
+              34.08
+            ],
+            [
+              72.64999999999999,
+              34.08
+            ],
+            [
+              72.64999999999999,
+              33.120000000000005
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Bahawalpur",
+        "province": "Punjab",
+        "name": "Bahawalpur"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.22000000000001,
+              28.86
+            ],
+            [
+              72.14,
+              28.86
+            ],
+            [
+              72.14,
+              29.939999999999998
+            ],
+            [
+              71.22000000000001,
+              29.939999999999998
+            ],
+            [
+              71.22000000000001,
+              28.86
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Gujranwala",
+        "province": "Punjab",
+        "name": "Gujranwala"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.81,
+              31.699999999999996
+            ],
+            [
+              74.57,
+              31.699999999999996
+            ],
+            [
+              74.57,
+              32.62
+            ],
+            [
+              73.81,
+              32.62
+            ],
+            [
+              73.81,
+              31.699999999999996
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Islamabad",
+        "province": "Islamabad Capital Territory",
+        "name": "Islamabad"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.76,
+              33.349999999999994
+            ],
+            [
+              73.36,
+              33.349999999999994
+            ],
+            [
+              73.36,
+              34.03
+            ],
+            [
+              72.76,
+              34.03
+            ],
+            [
+              72.76,
+              33.349999999999994
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Muzaffarabad",
+        "province": "Azad Jammu and Kashmir",
+        "name": "Muzaffarabad"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.11,
+              33.91
+            ],
+            [
+              73.83,
+              33.91
+            ],
+            [
+              73.83,
+              34.83
+            ],
+            [
+              73.11,
+              34.83
+            ],
+            [
+              73.11,
+              33.91
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "district": "Gilgit",
+        "province": "Gilgit-Baltistan",
+        "name": "Gilgit"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.91,
+              35.42
+            ],
+            [
+              74.71000000000001,
+              35.42
+            ],
+            [
+              74.71000000000001,
+              36.42
+            ],
+            [
+              73.91,
+              36.42
+            ],
+            [
+              73.91,
+              35.42
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
