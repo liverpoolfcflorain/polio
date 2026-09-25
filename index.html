@@ -3,1655 +3,1987 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<title>Pakistan Polio Surveillance</title>
+    <title>Pakistan Polio Surveillance</title>
 
-<!-- Leaflet -->
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-<link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
-<link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
-    rel="stylesheet"
->
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
 
 
-<style>
-
-/* =========================================================
+    <style>
+        /* =========================================================
    ROOT
    ========================================================= */
 
-:root {
+        :root {
 
-    --blue-dark: #062c4f;
-    --blue: #0d3b66;
-    --blue-mid: #397eb1;
-    --blue-light: #a9cfe8;
+            --blue-dark: #062c4f;
+            --blue: #0d3b66;
+            --blue-mid: #397eb1;
+            --blue-light: #a9cfe8;
 
-    --white: #ffffff;
-    --muted: #aab8c4;
+            --white: #ffffff;
+            --muted: #aab8c4;
 
-    --glass: rgba(8, 20, 30, 0.78);
-    --glass-light: rgba(8, 20, 30, 0.64);
+            --glass: rgba(8, 20, 30, 0.78);
+            --glass-light: rgba(8, 20, 30, 0.64);
 
-    --border: rgba(255,255,255,0.13);
+            --border: rgba(255, 255, 255, 0.13);
 
-    --font:
-        'IBM Plex Sans',
-        Arial,
-        sans-serif;
+            --font:
+                'IBM Plex Sans',
+                Arial,
+                sans-serif;
 
-    --mono:
-        'IBM Plex Mono',
-        monospace;
-}
+            --mono:
+                'IBM Plex Mono',
+                monospace;
 
 
-/* =========================================================
+            /*
+       PANEL PALETTE
+       Used by the full-screen Data and
+       Organizations panels, which are never
+       visible at the same time as the map's
+       blue-toned top bar, so they carry their
+       own distinct identity.
+    */
+
+            --panel-bg-a: #0e1c28;
+            --panel-bg-b: #050b11;
+
+            --teal: #2dd4bf;
+            --teal-dark: #0f9488;
+            --teal-soft: rgba(45, 212, 191, 0.14);
+
+            --amber: #f0ab3d;
+            --amber-soft: rgba(240, 171, 61, 0.14);
+
+            --ink: #eef4f8;
+            --ink-muted: #8ea3b5;
+
+            --panel-surface: rgba(255, 255, 255, .04);
+            --panel-surface-hover: rgba(255, 255, 255, .07);
+            --panel-border: rgba(255, 255, 255, .09);
+            --panel-border-strong: rgba(255, 255, 255, .18);
+
+        }
+
+
+        /* =========================================================
    RESET
    ========================================================= */
 
-* {
-    box-sizing: border-box;
-}
+        * {
+            box-sizing: border-box;
+        }
 
-html,
-body {
+        html,
+        body {
 
-    width: 100%;
-    height: 100%;
+            width: 100%;
+            height: 100%;
 
-    margin: 0;
-    padding: 0;
+            margin: 0;
+            padding: 0;
 
-    overflow: hidden;
+            overflow: hidden;
 
-    font-family: var(--font);
+            font-family: var(--font);
 
-    background: #08141d;
-    color: var(--white);
+            background: #08141d;
+            color: var(--white);
 
-}
+        }
 
 
-/* =========================================================
+        /* =========================================================
    LOADING SCREEN
    ========================================================= */
 
-#loader {
+        #loader {
 
-    position: fixed;
+            position: fixed;
 
-    inset: 0;
+            inset: 0;
 
-    z-index: 99999;
+            z-index: 99999;
 
-    background:
-        radial-gradient(
-            circle at center,
-            #0d3b66 0%,
-            #071723 45%,
-            #03090d 100%
-        );
+            background:
+                radial-gradient(circle at center,
+                    #0d3b66 0%,
+                    #071723 45%,
+                    #03090d 100%);
 
-    display: flex;
+            display: flex;
 
-    flex-direction: column;
+            flex-direction: column;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: center;
+            justify-content: center;
 
-    gap: 22px;
+            gap: 22px;
 
-    transition:
-        opacity .7s ease,
-        visibility .7s ease;
+            transition:
+                opacity .7s ease,
+                visibility .7s ease;
 
-}
+        }
 
 
-#loader.hidden {
+        #loader.hidden {
 
-    opacity: 0;
+            opacity: 0;
 
-    visibility: hidden;
+            visibility: hidden;
 
-    pointer-events: none;
+            pointer-events: none;
 
-}
+        }
 
 
-.loader-ring {
+        .loader-ring {
 
-    width: 78px;
-    height: 78px;
+            width: 78px;
+            height: 78px;
 
-    border:
+            border:
 
-        2px solid
-        rgba(255,255,255,.18);
+                2px solid rgba(255, 255, 255, .18);
 
-    border-top-color:
-        #ffffff;
+            border-top-color:
+                #ffffff;
 
-    border-radius: 50%;
+            border-radius: 50%;
 
-    animation:
-        loaderSpin 1s linear infinite;
+            animation:
+                loaderSpin 1s linear infinite;
 
-}
+        }
 
 
-.loader-inner {
+        .loader-inner {
 
-    position: absolute;
+            position: absolute;
 
-    width: 36px;
-    height: 36px;
+            width: 36px;
+            height: 36px;
 
-    border-radius: 50%;
+            border-radius: 50%;
 
-    border:
-        2px solid
-        rgba(255,255,255,.12);
+            border:
+                2px solid rgba(255, 255, 255, .12);
 
-    border-bottom-color:
-        #8cc7eb;
+            border-bottom-color:
+                #8cc7eb;
 
-    animation:
-        loaderSpinReverse 1.4s linear infinite;
+            animation:
+                loaderSpinReverse 1.4s linear infinite;
 
-}
+        }
 
 
-.loader-mark {
+        .loader-mark {
 
-    position: relative;
+            position: relative;
 
-    width: 78px;
-    height: 78px;
+            width: 78px;
+            height: 78px;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
-    justify-content: center;
+            align-items: center;
+            justify-content: center;
 
-}
+        }
 
 
-.loader-logo {
+        .loader-logo {
 
-    position: absolute;
+            position: absolute;
 
-    width: 46px;
-    height: 46px;
+            width: 46px;
+            height: 46px;
 
-    border-radius: 50%;
+            border-radius: 50%;
 
-    box-shadow:
-        0 2px 14px
-        rgba(0,0,0,.35);
+            box-shadow:
+                0 2px 14px rgba(0, 0, 0, .35);
 
-}
+        }
 
 
-.loader-title {
+        .loader-title {
 
-    font-size: 18px;
+            font-size: 18px;
 
-    font-weight: 600;
+            font-weight: 600;
 
-    letter-spacing: .08em;
+            letter-spacing: .08em;
 
-    text-transform: uppercase;
+            text-transform: uppercase;
 
-}
+        }
 
 
-.loader-sub {
+        .loader-sub {
 
-    font-family: var(--mono);
+            font-family: var(--mono);
 
-    font-size: 10px;
+            font-size: 10px;
 
-    color: rgba(255,255,255,.58);
+            color: rgba(255, 255, 255, .58);
 
-    letter-spacing: .08em;
+            letter-spacing: .08em;
 
-}
+        }
 
 
-@keyframes loaderSpin {
+        @keyframes loaderSpin {
 
-    to {
-        transform: rotate(360deg);
-    }
+            to {
+                transform: rotate(360deg);
+            }
 
-}
+        }
 
 
-@keyframes loaderSpinReverse {
+        @keyframes loaderSpinReverse {
 
-    to {
-        transform: rotate(-360deg);
-    }
+            to {
+                transform: rotate(-360deg);
+            }
 
-}
+        }
 
 
-/* =========================================================
+        /* =========================================================
    MAP
    ========================================================= */
 
-#map {
+        #map {
 
-    position: absolute;
+            position: absolute;
 
-    inset: 0;
+            inset: 0;
 
-    z-index: 1;
+            z-index: 1;
 
-    background: #10232f;
+            background: #10232f;
 
-}
+        }
 
 
-/* =========================================================
+        /* =========================================================
    SATELLITE OVERLAY
    ========================================================= */
 
-.map-vignette {
+        .map-vignette {
 
-    position: absolute;
+            position: absolute;
 
-    inset: 0;
+            inset: 0;
 
-    z-index: 400;
+            z-index: 400;
 
-    pointer-events: none;
+            pointer-events: none;
 
-    background:
+            background:
 
-        linear-gradient(
-            180deg,
-            rgba(0,0,0,.58) 0%,
-            rgba(0,0,0,.05) 20%,
-            rgba(0,0,0,0) 55%,
-            rgba(0,0,0,.35) 100%
-        );
+                linear-gradient(180deg,
+                    rgba(0, 0, 0, .58) 0%,
+                    rgba(0, 0, 0, .05) 20%,
+                    rgba(0, 0, 0, 0) 55%,
+                    rgba(0, 0, 0, .35) 100%);
 
-}
+        }
 
 
-/* =========================================================
+        /* =========================================================
    TOP BAR
    ========================================================= */
 
-.topbar {
+        .topbar {
 
-    position: absolute;
+            position: absolute;
 
-    z-index: 1000;
+            z-index: 1000;
 
-    top: 22px;
-    left: 22px;
-    right: 22px;
+            top: 22px;
+            left: 22px;
+            right: 22px;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: space-between;
+            justify-content: space-between;
 
-    gap: 20px;
+            gap: 20px;
 
-    pointer-events: none;
+            pointer-events: none;
 
-}
+        }
 
 
-.brand {
+        .brand {
 
-    pointer-events: auto;
+            pointer-events: auto;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    gap: 12px;
+            gap: 12px;
 
-    padding: 11px 15px;
+            padding: 11px 15px;
 
-    background:
-        var(--glass);
+            background:
+                var(--glass);
 
-    backdrop-filter:
-        blur(16px);
+            backdrop-filter:
+                blur(16px);
 
-    -webkit-backdrop-filter:
-        blur(16px);
+            -webkit-backdrop-filter:
+                blur(16px);
 
-    border:
-        1px solid
-        var(--border);
+            border:
+                1px solid var(--border);
 
-    border-radius: 9px;
+            border-radius: 9px;
 
-    box-shadow:
-        0 8px 30px
-        rgba(0,0,0,.22);
+            box-shadow:
+                0 8px 30px rgba(0, 0, 0, .22);
 
-}
+        }
 
 
-.brand-mark {
+        .brand-mark {
 
-    width: 34px;
-    height: 34px;
+            width: 34px;
+            height: 34px;
 
-    flex-shrink: 0;
+            flex-shrink: 0;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
-    justify-content: center;
+            align-items: center;
+            justify-content: center;
 
-}
+        }
 
 
-.brand-mark img {
+        .brand-mark img {
 
-    width: 100%;
-    height: 100%;
+            width: 100%;
+            height: 100%;
 
-    border-radius: 50%;
+            border-radius: 50%;
 
-}
+        }
 
 
-.brand-text strong {
+        .brand-text strong {
 
-    display: block;
+            display: block;
 
-    font-size: 13px;
+            font-size: 13px;
 
-    letter-spacing: .02em;
+            letter-spacing: .02em;
 
-}
+        }
 
 
-.brand-text span {
+        .brand-text span {
 
-    display: block;
+            display: block;
 
-    margin-top: 2px;
+            margin-top: 2px;
 
-    font-family: var(--mono);
+            font-family: var(--mono);
 
-    font-size: 9px;
+            font-size: 9px;
 
-    color: var(--muted);
+            color: var(--muted);
 
-    letter-spacing: .04em;
+            letter-spacing: .04em;
 
-}
+        }
 
 
-.nav {
+        .nav {
 
-    pointer-events: auto;
+            pointer-events: auto;
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    gap: 5px;
+            gap: 5px;
 
-    padding: 5px;
+            padding: 5px;
 
-    background:
-        var(--glass);
+            background:
+                var(--glass);
 
-    backdrop-filter:
-        blur(16px);
+            backdrop-filter:
+                blur(16px);
 
-    -webkit-backdrop-filter:
-        blur(16px);
+            -webkit-backdrop-filter:
+                blur(16px);
 
-    border:
-        1px solid
-        var(--border);
+            border:
+                1px solid var(--border);
 
-    border-radius: 9px;
+            border-radius: 9px;
 
-}
+        }
 
 
-.nav button {
+        .nav button {
 
-    border: none;
+            border: none;
 
-    background: transparent;
+            background: transparent;
 
-    color: rgba(255,255,255,.62);
+            color: rgba(255, 255, 255, .62);
 
-    padding: 9px 14px;
+            padding: 9px 14px;
 
-    border-radius: 6px;
+            border-radius: 6px;
 
-    font-family: var(--font);
+            font-family: var(--font);
 
-    font-size: 11px;
+            font-size: 11px;
 
-    font-weight: 600;
+            font-weight: 600;
 
-    cursor: pointer;
+            cursor: pointer;
 
-    transition:
-        background .2s ease,
-        color .2s ease;
+            transition:
+                background .2s ease,
+                color .2s ease;
 
-}
+        }
 
 
-.nav button:hover {
+        .nav button:hover {
 
-    color: white;
+            color: white;
 
-    background:
-        rgba(255,255,255,.08);
+            background:
+                rgba(255, 255, 255, .08);
 
-}
+        }
 
 
-.nav button.active {
+        .nav button.active {
 
-    background:
-        rgba(255,255,255,.13);
+            background:
+                rgba(255, 255, 255, .13);
 
-    color: white;
+            color: white;
 
-}
+        }
 
 
-/* =========================================================
+        /* =========================================================
    YEAR BADGE
    ========================================================= */
 
-.year-badge {
+        .year-badge {
 
-    position: absolute;
+            position: absolute;
 
-    z-index: 900;
+            z-index: 900;
 
-    top: 96px;
-    left: 22px;
+            top: 96px;
+            left: 22px;
 
-    background:
-        var(--glass);
+            background:
+                var(--glass);
 
-    backdrop-filter:
-        blur(14px);
+            backdrop-filter:
+                blur(14px);
 
-    border:
-        1px solid
-        var(--border);
+            border:
+                1px solid var(--border);
 
-    border-radius: 8px;
+            border-radius: 8px;
 
-    padding: 10px 13px;
+            padding: 10px 13px;
 
-    pointer-events: none;
+            pointer-events: none;
 
-}
-
-
-.year-badge .small {
-
-    font-family: var(--mono);
-
-    font-size: 8px;
-
-    color: var(--muted);
-
-    letter-spacing: .08em;
-
-    text-transform: uppercase;
-
-}
+        }
 
 
-.year-badge .year {
+        .year-badge .small {
 
-    font-family: var(--mono);
+            font-family: var(--mono);
 
-    font-size: 25px;
+            font-size: 8px;
 
-    font-weight: 600;
+            color: var(--muted);
 
-    margin-top: 2px;
+            letter-spacing: .08em;
 
-}
+            text-transform: uppercase;
+
+        }
 
 
-/* =========================================================
+        .year-badge .year {
+
+            font-family: var(--mono);
+
+            font-size: 25px;
+
+            font-weight: 600;
+
+            margin-top: 2px;
+
+        }
+
+
+        /* =========================================================
    MAP LEGEND
    ========================================================= */
 
-.map-legend {
+        .map-legend {
 
-    position: absolute;
+            position: absolute;
 
-    z-index: 900;
+            z-index: 900;
 
-    left: 22px;
+            left: 22px;
 
-    bottom: 24px;
+            bottom: 24px;
 
-    background:
-        var(--glass);
+            background:
+                var(--glass);
 
-    backdrop-filter:
-        blur(14px);
+            backdrop-filter:
+                blur(14px);
 
-    border:
-        1px solid
-        var(--border);
+            border:
+                1px solid var(--border);
 
-    border-radius: 8px;
+            border-radius: 8px;
 
-    padding: 12px 14px;
+            padding: 12px 14px;
 
-    pointer-events: none;
+            pointer-events: none;
 
-}
-
-
-.legend-title {
-
-    font-family: var(--mono);
-
-    font-size: 8px;
-
-    color: var(--muted);
-
-    text-transform: uppercase;
-
-    letter-spacing: .08em;
-
-    margin-bottom: 8px;
-
-}
+        }
 
 
-.legend-scale {
+        .legend-title {
 
-    display: flex;
+            font-family: var(--mono);
 
-    align-items: center;
+            font-size: 8px;
 
-    gap: 8px;
+            color: var(--muted);
 
-}
+            text-transform: uppercase;
 
+            letter-spacing: .08em;
 
-.gradient {
+            margin-bottom: 8px;
 
-    width: 130px;
-
-    height: 8px;
-
-    border-radius: 10px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #dceff9,
-            #a9cfe8,
-            #6fa8d0,
-            #397eb1,
-            #0d3b66
-        );
-
-}
+        }
 
 
-.legend-labels {
+        .legend-scale {
 
-    display: flex;
+            display: flex;
 
-    justify-content: space-between;
+            align-items: center;
 
-    margin-top: 5px;
+            gap: 8px;
 
-    color: rgba(255,255,255,.55);
-
-    font-family: var(--mono);
-
-    font-size: 8px;
-
-}
+        }
 
 
-/* =========================================================
+        .gradient {
+
+            width: 130px;
+
+            height: 8px;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(90deg,
+                    #dceff9,
+                    #a9cfe8,
+                    #6fa8d0,
+                    #397eb1,
+                    #0d3b66);
+
+        }
+
+
+        .legend-labels {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-top: 5px;
+
+            color: rgba(255, 255, 255, .55);
+
+            font-family: var(--mono);
+
+            font-size: 8px;
+
+        }
+
+
+        /* =========================================================
    SLIDER
    ========================================================= */
 
-.slider-container {
+        .slider-container {
 
-    position: absolute;
+            position: absolute;
 
-    z-index: 1200;
+            z-index: 1200;
 
-    bottom: 0;
+            bottom: 0;
 
-    left: 50%;
+            left: 50%;
 
-    transform:
-        translateX(-50%)
-        translateY(68px);
+            transform:
+                translateX(-50%) translateY(68px);
 
-    width: min(700px, calc(100% - 40px));
+            width: min(700px, calc(100% - 40px));
 
-    padding: 15px 18px 18px;
+            padding: 15px 18px 18px;
 
-    background:
-        var(--glass);
+            background:
+                var(--glass);
 
-    backdrop-filter:
-        blur(18px);
+            backdrop-filter:
+                blur(18px);
 
-    -webkit-backdrop-filter:
-        blur(18px);
+            -webkit-backdrop-filter:
+                blur(18px);
 
-    border:
-        1px solid
-        var(--border);
+            border:
+                1px solid var(--border);
 
-    border-bottom: none;
+            border-bottom: none;
 
-    border-radius:
-        12px 12px 0 0;
+            border-radius:
+                12px 12px 0 0;
 
-    transition:
-        transform .3s ease;
+            transition:
+                transform .3s ease;
 
-}
+        }
 
 
-/*
+        /*
    The slider appears when the user moves
    into the bottom area of the map.
 */
 
-.slider-trigger {
+        .slider-trigger {
 
-    position: absolute;
+            position: absolute;
 
-    z-index: 1199;
+            z-index: 1199;
 
-    left: 0;
-    right: 0;
+            left: 0;
+            right: 0;
 
-    bottom: 0;
+            bottom: 0;
 
-    height: 55px;
+            height: 55px;
 
-}
+        }
 
 
-.slider-trigger:hover
-~ .slider-container,
-.slider-container:hover {
+        .slider-trigger:hover~.slider-container,
+        .slider-container:hover {
 
-    transform:
-        translateX(-50%)
-        translateY(0);
+            transform:
+                translateX(-50%) translateY(0);
 
-}
+        }
 
 
-.slider-header {
+        .slider-header {
 
-    display: flex;
+            display: flex;
 
-    align-items: center;
+            align-items: center;
 
-    justify-content: space-between;
+            justify-content: space-between;
 
-    margin-bottom: 9px;
+            margin-bottom: 9px;
 
-}
+        }
 
 
-.slider-year {
+        .slider-year {
 
-    font-family: var(--mono);
+            font-family: var(--mono);
 
-    font-size: 18px;
+            font-size: 18px;
 
-    font-weight: 600;
+            font-weight: 600;
 
-}
+        }
 
 
-.slider-total {
+        .slider-total {
 
-    font-family: var(--mono);
+            font-family: var(--mono);
 
-    font-size: 9px;
+            font-size: 9px;
 
-    color: var(--muted);
+            color: var(--muted);
 
-}
+        }
 
 
-input[type="range"] {
+        input[type="range"] {
 
-    width: 100%;
+            width: 100%;
 
-    height: 4px;
+            height: 4px;
 
-    appearance: none;
+            appearance: none;
 
-    -webkit-appearance: none;
+            -webkit-appearance: none;
 
-    background:
-        rgba(255,255,255,.22);
+            background:
+                rgba(255, 255, 255, .22);
 
-    border-radius: 10px;
+            border-radius: 10px;
 
-    outline: none;
+            outline: none;
 
-}
+        }
 
 
-input[type="range"]::-webkit-slider-thumb {
+        input[type="range"]::-webkit-slider-thumb {
 
-    appearance: none;
+            appearance: none;
 
-    -webkit-appearance: none;
+            -webkit-appearance: none;
 
-    width: 17px;
+            width: 17px;
 
-    height: 17px;
+            height: 17px;
 
-    border-radius: 50%;
+            border-radius: 50%;
 
-    background:
-        #ffffff;
+            background:
+                #ffffff;
 
-    border:
-        3px solid
-        #0d3b66;
+            border:
+                3px solid #0d3b66;
 
-    box-shadow:
-        0 0 0 2px
-        rgba(255,255,255,.35);
+            box-shadow:
+                0 0 0 2px rgba(255, 255, 255, .35);
 
-    cursor: pointer;
+            cursor: pointer;
 
-}
+        }
 
 
-input[type="range"]::-moz-range-thumb {
+        input[type="range"]::-moz-range-thumb {
 
-    width: 15px;
+            width: 15px;
 
-    height: 15px;
+            height: 15px;
 
-    border-radius: 50%;
+            border-radius: 50%;
 
-    background:
-        #ffffff;
+            background:
+                #ffffff;
 
-    border:
-        3px solid
-        #0d3b66;
+            border:
+                3px solid #0d3b66;
 
-    cursor: pointer;
+            cursor: pointer;
 
-}
+        }
 
 
-.year-ticks {
+        .year-ticks {
 
-    display: flex;
+            display: flex;
 
-    justify-content: space-between;
+            justify-content: space-between;
 
-    margin-top: 7px;
+            margin-top: 7px;
 
-    font-family: var(--mono);
+            font-family: var(--mono);
 
-    font-size: 8px;
+            font-size: 8px;
 
-    color:
-        rgba(255,255,255,.42);
+            color:
+                rgba(255, 255, 255, .42);
 
-}
+        }
 
 
-/* =========================================================
+        /* =========================================================
    DATA PANEL
    ========================================================= */
 
-#dataPanel,
-#orgPanel {
+        #dataPanel,
+        #orgPanel {
 
-    position: absolute;
+            position: absolute;
 
-    inset: 0;
+            inset: 0;
 
-    z-index: 5000;
+            z-index: 5000;
 
-    background:
-        #08141d;
+            background:
+                radial-gradient(circle at 12% -10%,
+                    var(--panel-bg-a) 0%,
+                    var(--panel-bg-b) 55%,
+                    #04080c 100%);
 
-    transform:
-        translateX(100%);
+            color:
+                var(--ink);
 
-    transition:
-        transform .45s
-        cubic-bezier(.4,0,.2,1);
+            transform:
+                translateX(100%);
 
-    overflow-y: auto;
+            transition:
+                transform .45s cubic-bezier(.4, 0, .2, 1);
 
-}
+            overflow-y: auto;
 
-
-#dataPanel.open,
-#orgPanel.open {
-
-    transform:
-        translateX(0);
-
-}
+        }
 
 
-.data-page {
+        #dataPanel.open,
+        #orgPanel.open {
 
-    width:
-        min(1150px, 92%);
+            transform:
+                translateX(0);
 
-    margin:
-        0 auto;
-
-    padding:
-        100px 0 60px;
-
-}
+        }
 
 
-.data-header {
+        .data-page {
 
-    display: flex;
+            width:
+                min(1150px, 92%);
 
-    align-items: flex-end;
+            margin:
+                0 auto;
 
-    justify-content: space-between;
+            padding:
+                100px 0 70px;
 
-    gap: 30px;
-
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.1);
-
-    padding-bottom: 20px;
-
-    margin-bottom: 25px;
-
-}
+        }
 
 
-.data-header h1 {
+        .data-header {
 
-    margin: 0;
+            display: flex;
 
-    font-size: 28px;
+            align-items: flex-end;
 
-}
+            justify-content: space-between;
 
+            gap: 30px;
 
-.data-header p {
+            border-bottom:
+                1px solid var(--panel-border);
 
-    color: var(--muted);
+            padding-bottom: 26px;
 
-    font-size: 12px;
+            margin-bottom: 34px;
 
-    margin:
-        7px 0 0;
-
-}
-
-
-.close-data {
-
-    background:
-        rgba(255,255,255,.06);
-
-    border:
-        1px solid
-        var(--border);
-
-    color: white;
-
-    border-radius: 7px;
-
-    padding:
-        10px 15px;
-
-    cursor: pointer;
-
-    font-size: 11px;
-
-}
+        }
 
 
-.close-data:hover {
+        .data-eyebrow {
 
-    background:
-        rgba(255,255,255,.1);
+            display: flex;
 
-}
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 10px;
+
+        }
 
 
-/* =========================================================
+        .data-eyebrow::before {
+
+            content: "";
+
+            width: 22px;
+            height: 2px;
+
+            background:
+                var(--teal);
+
+        }
+
+
+        .data-eyebrow span {
+
+            font-family: var(--mono);
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            letter-spacing: .16em;
+
+            text-transform: uppercase;
+
+            color:
+                var(--teal);
+
+        }
+
+
+        .data-header h1 {
+
+            margin: 0;
+
+            font-size: 32px;
+
+            font-weight: 600;
+
+            letter-spacing: -.01em;
+
+        }
+
+
+        .data-header p {
+
+            color: var(--ink-muted);
+
+            font-size: 13px;
+
+            line-height: 1.6;
+
+            margin:
+                9px 0 0;
+
+            max-width: 480px;
+
+        }
+
+
+        .close-data {
+
+            flex-shrink: 0;
+
+            background:
+                var(--panel-surface);
+
+            border:
+                1px solid var(--panel-border-strong);
+
+            color: var(--ink);
+
+            border-radius: 999px;
+
+            padding:
+                11px 18px;
+
+            cursor: pointer;
+
+            font-family: var(--font);
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            letter-spacing: .02em;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+
+        }
+
+
+        .close-data:hover {
+
+            background:
+                var(--teal-soft);
+
+            border-color:
+                var(--teal);
+
+            color:
+                var(--teal);
+
+            transform:
+                translateX(-2px);
+
+        }
+
+
+        /* =========================================================
    STAT GRID
    ========================================================= */
 
-.stats {
+        .stats {
 
-    display: grid;
+            display: grid;
 
-    grid-template-columns:
-        repeat(4, 1fr);
+            grid-template-columns:
+                repeat(4, 1fr);
 
-    gap: 12px;
+            gap: 14px;
 
-    margin-bottom: 25px;
+            margin-bottom: 36px;
 
-}
-
-
-.stat-card {
-
-    background:
-        rgba(255,255,255,.045);
-
-    border:
-        1px solid
-        rgba(255,255,255,.09);
-
-    border-radius: 9px;
-
-    padding: 18px;
-
-}
+        }
 
 
-.stat-number {
+        .stat-card {
 
-    font-family: var(--mono);
+            position: relative;
 
-    font-size: 27px;
+            background:
+                var(--panel-surface);
 
-    font-weight: 600;
+            border:
+                1px solid var(--panel-border);
 
-}
+            border-radius: 12px;
+
+            padding: 20px 20px 18px 22px;
+
+            overflow: hidden;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease;
+
+        }
 
 
-.stat-label {
+        .stat-card::before {
 
-    color: var(--muted);
+            content: "";
 
-    font-size: 10px;
+            position: absolute;
 
-    margin-top: 6px;
+            inset: 0 auto 0 0;
 
-}
+            width: 3px;
+
+            background:
+                var(--teal);
+
+        }
 
 
-/* =========================================================
+        .stat-card:nth-child(2n)::before {
+
+            background:
+                var(--amber);
+
+        }
+
+
+        .stat-card:hover {
+
+            background:
+                var(--panel-surface-hover);
+
+            border-color:
+                var(--panel-border-strong);
+
+        }
+
+
+        .stat-number {
+
+            font-family: var(--mono);
+
+            font-size: 30px;
+
+            font-weight: 600;
+
+            letter-spacing: -.01em;
+
+            color:
+                var(--teal);
+
+        }
+
+
+        .stat-card:nth-child(2n) .stat-number {
+
+            color:
+                var(--amber);
+
+        }
+
+
+        .stat-label {
+
+            color: var(--ink-muted);
+
+            font-size: 9.5px;
+
+            font-weight: 600;
+
+            letter-spacing: .06em;
+
+            text-transform: uppercase;
+
+            margin-top: 8px;
+
+        }
+
+
+        /* =========================================================
    DATA GRID
    ========================================================= */
 
-.data-grid {
+        .data-grid {
 
-    display: grid;
+            display: grid;
 
-    grid-template-columns:
-        1fr 360px;
+            grid-template-columns:
+                1fr 360px;
 
-    gap: 20px;
+            gap: 20px;
 
-}
-
-
-.panel {
-
-    background:
-        rgba(255,255,255,.035);
-
-    border:
-        1px solid
-        rgba(255,255,255,.09);
-
-    border-radius: 9px;
-
-    padding: 18px;
-
-}
+        }
 
 
-.panel h2 {
+        .panel {
 
-    margin:
-        0 0 14px;
+            background:
+                var(--panel-surface);
 
-    font-size: 14px;
+            border:
+                1px solid var(--panel-border);
 
-}
+            border-radius: 12px;
 
+            padding: 22px;
 
-.panel-description {
-
-    color: var(--muted);
-
-    font-size: 11px;
-
-    line-height: 1.6;
-
-    margin-bottom: 13px;
-
-}
+        }
 
 
-/* =========================================================
+        .panel h2 {
+
+            margin:
+                0 0 4px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            padding-left: 13px;
+
+            position: relative;
+
+        }
+
+
+        .panel h2::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 3px;
+
+            width: 4px;
+            height: 4px;
+
+            border-radius: 50%;
+
+            background:
+                var(--teal);
+
+        }
+
+
+        .panel-description {
+
+            color: var(--ink-muted);
+
+            font-size: 11.5px;
+
+            line-height: 1.65;
+
+            margin:
+                0 0 16px;
+
+            padding-left: 13px;
+
+        }
+
+
+        /* =========================================================
    TABLE
    ========================================================= */
 
-.table-wrapper {
+        .table-wrapper {
 
-    max-height: 430px;
+            max-height: 430px;
 
-    overflow: auto;
+            overflow: auto;
 
-}
+            border-radius: 8px;
 
+            border:
+                1px solid var(--panel-border);
 
-table {
-
-    width: 100%;
-
-    border-collapse:
-        collapse;
-
-    font-size: 11px;
-
-}
+        }
 
 
-th {
+        table {
 
-    position: sticky;
+            width: 100%;
 
-    top: 0;
+            border-collapse:
+                collapse;
 
-    background:
-        #101f2a;
+            font-size: 11px;
 
-    color: var(--muted);
-
-    font-family: var(--mono);
-
-    font-size: 8px;
-
-    text-transform:
-        uppercase;
-
-    letter-spacing: .06em;
-
-    text-align: left;
-
-    padding:
-        9px 7px;
-
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.1);
-
-}
+        }
 
 
-td {
+        th {
 
-    padding:
-        9px 7px;
+            position: sticky;
 
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.06);
+            top: 0;
 
-    color:
-        rgba(255,255,255,.8);
+            background:
+                #0d1c27;
 
-}
+            color: var(--ink-muted);
+
+            font-family: var(--mono);
+
+            font-size: 8.5px;
+
+            font-weight: 600;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing: .08em;
+
+            text-align: left;
+
+            padding:
+                11px 12px;
+
+            border-bottom:
+                1px solid var(--panel-border-strong);
+
+        }
 
 
-td:last-child {
+        tr:hover td {
 
-    font-family:
-        var(--mono);
+            background:
+                var(--panel-surface-hover);
 
-    color:
-        #8fc8ea;
-
-}
+        }
 
 
-/* =========================================================
+        td {
+
+            padding:
+                10px 12px;
+
+            border-bottom:
+                1px solid var(--panel-border);
+
+            color:
+                rgba(255, 255, 255, .82);
+
+            transition:
+                background .15s ease;
+
+        }
+
+
+        td:last-child {
+
+            font-family:
+                var(--mono);
+
+            font-weight: 600;
+
+            color:
+                var(--teal);
+
+        }
+
+
+        /* =========================================================
    CSV EDITOR
    ========================================================= */
 
-textarea {
+        textarea {
 
-    width: 100%;
+            width: 100%;
 
-    min-height: 260px;
+            min-height: 260px;
 
-    resize: vertical;
+            resize: vertical;
 
-    background:
-        #07131c;
+            background:
+                #071019;
 
-    border:
-        1px solid
-        rgba(255,255,255,.12);
+            border:
+                1px solid var(--panel-border);
 
-    border-radius: 7px;
+            border-radius: 8px;
 
-    color:
-        #c8e0ef;
+            color:
+                #c8e0ef;
 
-    font-family:
-        var(--mono);
+            font-family:
+                var(--mono);
 
-    font-size: 10px;
+            font-size: 10px;
 
-    line-height: 1.6;
+            line-height: 1.6;
 
-    padding: 12px;
+            padding: 13px;
 
-    outline: none;
+            outline: none;
 
-}
+            transition:
+                border-color .2s ease;
 
-
-textarea:focus {
-
-    border-color:
-        #397eb1;
-
-}
+        }
 
 
-.action-button {
+        textarea:focus {
 
-    width: 100%;
+            border-color:
+                var(--teal);
 
-    margin-top: 10px;
-
-    padding: 11px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background:
-        #0d3b66;
-
-    color: white;
-
-    font-family: var(--font);
-
-    font-size: 11px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-}
+        }
 
 
-.action-button:hover {
+        .action-button {
 
-    background:
-        #14558d;
+            width: 100%;
 
-}
+            margin-top: 12px;
+
+            padding: 12px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background:
+                linear-gradient(135deg,
+                    var(--teal-dark),
+                    var(--teal));
+
+            color:
+                #04211d;
+
+            font-family: var(--font);
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            letter-spacing: .02em;
+
+            cursor: pointer;
+
+            transition:
+                filter .2s ease,
+                transform .2s ease;
+
+        }
 
 
-/* =========================================================
+        .action-button:hover {
+
+            filter:
+                brightness(1.08);
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        /* =========================================================
    GEOJSON UPLOAD
    ========================================================= */
 
-.upload-box {
+        .upload-box {
 
-    margin-top: 18px;
+            margin-top: 20px;
 
-    border:
-        1px dashed
-        rgba(255,255,255,.18);
+            border:
+                1px dashed var(--panel-border-strong);
 
-    border-radius: 8px;
+            border-radius: 8px;
 
-    padding: 15px;
+            padding: 16px;
 
-}
+            transition:
+                border-color .2s ease;
 
-
-.upload-label {
-
-    display: block;
-
-    color: rgba(255,255,255,.75);
-
-    font-size: 11px;
-
-    margin-bottom: 8px;
-
-}
+        }
 
 
-input[type="file"] {
+        .upload-box:hover {
 
-    width: 100%;
+            border-color:
+                var(--amber);
 
-    color:
-        var(--muted);
-
-    font-size: 10px;
-
-}
+        }
 
 
-.help {
+        .upload-label {
 
-    margin-top: 8px;
+            display: block;
 
-    color:
-        var(--muted);
+            color: rgba(255, 255, 255, .8);
 
-    font-size: 9px;
+            font-size: 11px;
 
-    line-height: 1.5;
+            font-weight: 600;
 
-}
+            margin-bottom: 9px;
+
+        }
 
 
-/* =========================================================
+        input[type="file"] {
+
+            width: 100%;
+
+            color:
+                var(--ink-muted);
+
+            font-size: 10px;
+
+        }
+
+
+        .help {
+
+            margin-top: 9px;
+
+            color:
+                var(--ink-muted);
+
+            font-size: 9.5px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =========================================================
    ORGANIZATIONS PANEL
    ========================================================= */
 
-.org-grid {
+        .org-group {
 
-    display: grid;
+            margin-bottom: 38px;
 
-    grid-template-columns:
-        repeat(3, 1fr);
+        }
 
-    gap: 14px;
 
-}
+        .org-group:last-of-type {
 
+            margin-bottom: 0;
 
-.org-card {
+        }
 
-    background:
-        rgba(255,255,255,.035);
 
-    border:
-        1px solid
-        rgba(255,255,255,.09);
+        .org-group-label {
 
-    border-radius: 10px;
+            display: flex;
 
-    padding: 20px;
+            align-items: center;
 
-    display: flex;
+            gap: 12px;
 
-    flex-direction: column;
+            margin-bottom: 16px;
 
-    gap: 12px;
+        }
 
-    transition:
-        background .2s ease,
-        border-color .2s ease,
-        transform .2s ease;
 
-}
+        .org-group-label span {
 
+            font-family: var(--mono);
 
-.org-card:hover {
+            font-size: 10px;
 
-    background:
-        rgba(255,255,255,.06);
+            font-weight: 600;
 
-    border-color:
-        rgba(255,255,255,.18);
+            letter-spacing: .12em;
 
-    transform:
-        translateY(-2px);
+            text-transform: uppercase;
 
-}
+            color:
+                var(--ink-muted);
 
+            white-space: nowrap;
 
-.org-icon {
+        }
 
-    width: 42px;
-    height: 42px;
 
-    border-radius: 9px;
+        .org-group-label::after {
 
-    background:
-        linear-gradient(
-            135deg,
-            #0d3b66,
-            #397eb1
-        );
+            content: "";
 
-    display: flex;
+            flex: 1;
 
-    align-items: center;
-    justify-content: center;
+            height: 1px;
 
-    font-family: var(--mono);
+            background:
+                var(--panel-border);
 
-    font-size: 13px;
+        }
 
-    font-weight: 600;
 
-    letter-spacing: .02em;
+        .org-grid {
 
-}
+            display: grid;
 
+            grid-template-columns:
+                repeat(auto-fit,
+                    minmax(230px, 1fr));
 
-.org-card h3 {
+            gap: 14px;
 
-    margin: 0;
+        }
 
-    font-size: 13px;
 
-    font-weight: 600;
+        .org-card {
 
-    line-height: 1.4;
+            position: relative;
 
-}
+            background:
+                var(--panel-surface);
 
+            border:
+                1px solid var(--panel-border);
 
-.org-role {
+            border-radius: 12px;
 
-    font-family: var(--mono);
+            padding: 22px 20px 20px;
 
-    font-size: 8px;
+            display: flex;
 
-    color: #8fc8ea;
+            flex-direction: column;
 
-    letter-spacing: .07em;
+            gap: 13px;
 
-    text-transform: uppercase;
+            overflow: hidden;
 
-}
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease,
+                box-shadow .2s ease;
 
+        }
 
-.org-card p {
 
-    margin: 0;
+        .org-card::before {
 
-    font-size: 11.5px;
+            content: "";
 
-    line-height: 1.6;
+            position: absolute;
 
-    color: var(--muted);
+            inset: 0 auto 0 0;
 
-}
+            width: 3px;
 
+            background:
+                var(--teal);
 
-.org-note {
+        }
 
-    margin-top: 22px;
 
-    border:
-        1px dashed
-        rgba(255,255,255,.18);
+        .org-card:nth-child(2n)::before {
 
-    border-radius: 8px;
+            background:
+                var(--amber);
 
-    padding: 14px 16px;
+        }
 
-    font-size: 11px;
 
-    line-height: 1.6;
+        .org-card:hover {
 
-    color: var(--muted);
+            background:
+                var(--panel-surface-hover);
 
-}
+            border-color:
+                var(--panel-border-strong);
 
+            transform:
+                translateY(-3px);
 
-@media (max-width: 900px) {
+            box-shadow:
+                0 14px 30px rgba(0, 0, 0, .28);
 
-    .org-grid {
+        }
 
-        grid-template-columns:
-            1fr 1fr;
 
-    }
+        .org-icon {
 
-}
+            width: 44px;
+            height: 44px;
 
+            border-radius: 50%;
 
-@media (max-width: 560px) {
+            background:
+                linear-gradient(135deg,
+                    var(--teal-dark),
+                    var(--teal));
 
-    .org-grid {
+            display: flex;
 
-        grid-template-columns:
-            1fr;
+            align-items: center;
+            justify-content: center;
 
-    }
+            font-family: var(--mono);
 
-}
+            font-size: 11px;
 
+            font-weight: 700;
 
-/* =========================================================
+            letter-spacing: .01em;
+
+            color:
+                #04211d;
+
+            box-shadow:
+                0 0 0 4px var(--teal-soft);
+
+        }
+
+
+        .org-card:nth-child(2n) .org-icon {
+
+            background:
+                linear-gradient(135deg,
+                    #b9781f,
+                    var(--amber));
+
+            color:
+                #2b1a02;
+
+            box-shadow:
+                0 0 0 4px var(--amber-soft);
+
+        }
+
+
+        .org-card h3 {
+
+            margin: 0;
+
+            font-size: 13.5px;
+
+            font-weight: 600;
+
+            line-height: 1.4;
+
+        }
+
+
+        .org-role {
+
+            font-family: var(--mono);
+
+            font-size: 8.5px;
+
+            font-weight: 600;
+
+            color: var(--teal);
+
+            letter-spacing: .08em;
+
+            text-transform: uppercase;
+
+        }
+
+
+        .org-card:nth-child(2n) .org-role {
+
+            color: var(--amber);
+
+        }
+
+
+        .org-card p {
+
+            margin: 0;
+
+            font-size: 11.5px;
+
+            line-height: 1.65;
+
+            color: var(--ink-muted);
+
+        }
+
+
+        .org-note {
+
+            margin-top: 30px;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 12px;
+
+            border:
+                1px solid var(--panel-border);
+
+            background:
+                var(--panel-surface);
+
+            border-radius: 10px;
+
+            padding: 16px 18px;
+
+            font-size: 11.5px;
+
+            line-height: 1.65;
+
+            color: var(--ink-muted);
+
+        }
+
+
+        .org-note::before {
+
+            content: "";
+
+            flex-shrink: 0;
+
+            margin-top: 4px;
+
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background:
+                var(--teal);
+
+        }
+
+
+        @media (max-width: 560px) {
+
+            .org-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+        }
+
+
+        /* =========================================================
    LEAFLET
    ========================================================= */
 
-.leaflet-control-zoom {
+        .leaflet-control-zoom {
 
-    border:
-        1px solid
-        rgba(255,255,255,.15)
-        !important;
+            border:
+                1px solid rgba(255, 255, 255, .15) !important;
 
-}
+        }
 
 
-.leaflet-control-zoom a {
+        .leaflet-control-zoom a {
 
-    background:
-        rgba(8,20,30,.8)
-        !important;
-
-  
-    border:
-        none
-        !important;
-
-}
+            background:
+                rgba(8, 20, 30, .8) !important;
 
 
-.leaflet-control-attribution {
+            border:
+                none !important;
 
-    background:
-        rgba(0,0,0,.65)
-        !important;
-
-    color:
-        rgba(255,255,255,.55)
-        !important;
-
-}
+        }
 
 
-.leaflet-control-attribution a {
+        .leaflet-control-attribution {
 
-    color:
-        rgba(255,255,255,.75)
-        !important;
+            background:
+                rgba(0, 0, 0, .65) !important;
 
-}
+            color:
+                rgba(255, 255, 255, .55) !important;
+
+        }
 
 
-/* =========================================================
+        .leaflet-control-attribution a {
+
+            color:
+                rgba(255, 255, 255, .75) !important;
+
+        }
+
+
+        /* =========================================================
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 800px) {
+        @media (max-width: 800px) {
 
-    .topbar {
+            .topbar {
 
-        top: 12px;
-        left: 12px;
-        right: 12px;
+                top: 12px;
+                left: 12px;
+                right: 12px;
 
-    }
-
-
-    .brand-text span {
-
-        display: none;
-
-    }
+            }
 
 
-    .brand {
+            .brand-text span {
 
-        padding: 8px 10px;
+                display: none;
 
-    }
-
-
-    .nav button {
-
-        padding:
-            8px 10px;
-
-    }
+            }
 
 
-    .year-badge {
+            .brand {
 
-        top: 78px;
-        left: 12px;
+                padding: 8px 10px;
 
-    }
-
-
-    .map-legend {
-
-        left: 12px;
-        bottom: 15px;
-
-    }
+            }
 
 
-    .slider-container {
+            .nav button {
 
-        width:
-            calc(100% - 24px);
+                padding:
+                    8px 10px;
 
-    }
-
-
-    .stats {
-
-        grid-template-columns:
-            1fr 1fr;
-
-    }
+            }
 
 
-    .data-grid {
+            .year-badge {
 
-        grid-template-columns:
-            1fr;
+                top: 78px;
+                left: 12px;
 
-    }
-
-}
+            }
 
 
-@media (max-width: 500px) {
+            .map-legend {
 
-    .brand-text strong {
+                left: 12px;
+                bottom: 15px;
 
-        font-size: 11px;
-
-    }
-
-
-    .nav button {
-
-        font-size: 9px;
-
-        padding:
-            8px 8px;
-
-    }
+            }
 
 
-    .stats {
+            .slider-container {
 
-        grid-template-columns:
-            1fr;
+                width:
+                    calc(100% - 24px);
 
-    }
+            }
 
 
-    .data-header {
+            .stats {
 
-        align-items:
-            flex-start;
+                grid-template-columns:
+                    1fr 1fr;
 
-        flex-direction:
-            column;
+            }
 
-    }
 
-}
+            .data-grid {
 
-</style>
+                grid-template-columns:
+                    1fr;
+
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .brand-text strong {
+
+                font-size: 11px;
+
+            }
+
+
+            .nav button {
+
+                font-size: 9px;
+
+                padding:
+                    8px 8px;
+
+            }
+
+
+            .stats {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .data-header {
+
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+
+            }
+
+        }
+    </style>
 
 </head>
 
@@ -1659,71 +1991,143 @@ input[type="file"] {
 <body>
 
 
-<!-- =====================================================
+    <!-- =====================================================
      LOADING SCREEN
      ===================================================== -->
 
-<div id="loader">
+    <div id="loader">
 
-    <div class="loader-mark">
+        <div class="loader-mark">
 
-        <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
 
-        <div class="loader-inner"></div>
+            <div class="loader-inner"></div>
 
-        <img
-            class="loader-logo"
-            src="logo.png"
-            alt="Pakistan Polio Surveillance"
-        >
-
-    </div>
-
-    <div class="loader-title">
-        Pakistan Polio Surveillance
-    </div>
-
-    <div class="loader-sub">
-        INITIALIZING SATELLITE SURVEILLANCE MAP
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     MAP
-     ===================================================== -->
-
-<div id="map"></div>
-
-<div class="map-vignette"></div>
-
-
-<!-- =====================================================
-     TOP BAR
-     ===================================================== -->
-
-<div class="topbar">
-
-    <div class="brand">
-
-        <div class="brand-mark">
-
-            <img
-                src="logo.png"
-                alt="Logo"
-            >
+            <img class="loader-logo" src="logo.png" alt="Pakistan Polio Surveillance">
 
         </div>
 
-        <div class="brand-text">
+        <div class="loader-title">
+            Pakistan Polio Surveillance
+        </div>
 
-            <strong>
-                Pakistan Polio Surveillance
-            </strong>
+        <div class="loader-sub">
+            INITIALIZING SATELLITE SURVEILLANCE MAP
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     MAP
+     ===================================================== -->
+
+    <div id="map"></div>
+
+    <div class="map-vignette"></div>
+
+
+    <!-- =====================================================
+     TOP BAR
+     ===================================================== -->
+
+    <div class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+
+                <img src="logo.png" alt="Logo">
+
+            </div>
+
+            <div class="brand-text">
+
+                <strong>
+                    Pakistan Polio Surveillance
+                </strong>
+
+                <span>
+                    DISTRICT DENSITY MONITOR
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="nav">
+
+            <button id="mapButton" class="active" type="button">
+                MAP
+            </button>
+
+            <button id="dataButton" type="button">
+                DATA
+            </button>
+
+            <button id="orgButton" type="button">
+                ORGANIZATIONS
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     YEAR DISPLAY
+     ===================================================== -->
+
+    <div class="year-badge">
+
+        <div class="small">
+            Surveillance year
+        </div>
+
+        <div class="year" id="yearDisplay">
+            2024
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     LEGEND
+     ===================================================== -->
+
+    <div class="map-legend">
+
+        <div class="legend-title">
+            Case density
+        </div>
+
+        <div class="legend-scale">
 
             <span>
-                DISTRICT DENSITY MONITOR
+                low
+            </span>
+
+            <div class="gradient"></div>
+
+            <span>
+                high
+            </span>
+
+        </div>
+
+        <div class="legend-labels">
+
+            <span>
+                0
+            </span>
+
+            <span>
+                cases
+            </span>
+
+            <span>
+                max
             </span>
 
         </div>
@@ -1731,400 +2135,261 @@ input[type="file"] {
     </div>
 
 
-    <div class="nav">
-
-        <button
-            id="mapButton"
-            class="active"
-            type="button"
-        >
-            MAP
-        </button>
-
-        <button
-            id="dataButton"
-            type="button"
-        >
-            DATA
-        </button>
-
-        <button
-            id="orgButton"
-            type="button"
-        >
-            ORGANIZATIONS
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     YEAR DISPLAY
-     ===================================================== -->
-
-<div class="year-badge">
-
-    <div class="small">
-        Surveillance year
-    </div>
-
-    <div
-        class="year"
-        id="yearDisplay"
-    >
-        2024
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     LEGEND
-     ===================================================== -->
-
-<div class="map-legend">
-
-    <div class="legend-title">
-        Case density
-    </div>
-
-    <div class="legend-scale">
-
-        <span>
-            low
-        </span>
-
-        <div class="gradient"></div>
-
-        <span>
-            high
-        </span>
-
-    </div>
-
-    <div class="legend-labels">
-
-        <span>
-            0
-        </span>
-
-        <span>
-            cases
-        </span>
-
-        <span>
-            max
-        </span>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
+    <!-- =====================================================
      SLIDER TRIGGER
      ===================================================== -->
 
-<div class="slider-trigger"></div>
+    <div class="slider-trigger"></div>
 
 
-<!-- =====================================================
+    <!-- =====================================================
      SLIDER
      ===================================================== -->
 
-<div class="slider-container">
+    <div class="slider-container">
 
-    <div class="slider-header">
+        <div class="slider-header">
 
-        <div
-            class="slider-year"
-            id="sliderYear"
-        >
-            2024
+            <div class="slider-year" id="sliderYear">
+                2024
+            </div>
+
+            <div class="slider-total" id="sliderTotal">
+                0 cases
+            </div>
+
         </div>
 
-        <div
-            class="slider-total"
-            id="sliderTotal"
-        >
-            0 cases
-        </div>
+
+        <input type="range" id="yearSlider" min="0" max="0" value="0" step="1">
+
+
+        <div class="year-ticks" id="yearTicks"></div>
 
     </div>
 
 
-    <input
-        type="range"
-        id="yearSlider"
-        min="0"
-        max="0"
-        value="0"
-        step="1"
-    >
-
-
-    <div
-        class="year-ticks"
-        id="yearTicks"
-    ></div>
-
-</div>
-
-
-<!-- =====================================================
+    <!-- =====================================================
      DATA PANEL
      ===================================================== -->
 
-<div id="dataPanel">
+    <div id="dataPanel">
 
-    <div class="data-page">
+        <div class="data-page">
 
-        <div class="data-header">
+            <div class="data-header">
 
-            <div>
+                <div>
 
-                <h1>
-                    Surveillance Data
-                </h1>
+                    <div class="data-eyebrow">
+                        <span>Case Surveillance</span>
+                    </div>
 
-                <p>
-                    Explore, update and manage the district-level
-                    surveillance dataset.
-                </p>
+                    <h1>
+                        Surveillance Data
+                    </h1>
 
-            </div>
-
-
-            <button
-                class="close-data"
-                id="closeData"
-                type="button"
-            >
-                ← Back to map
-            </button>
-
-        </div>
-
-
-        <!-- STATS -->
-
-        <div class="stats">
-
-            <div class="stat-card">
-
-                <div
-                    class="stat-number"
-                    id="dataTotalCases"
-                >
-                    0
-                </div>
-
-                <div class="stat-label">
-                    TOTAL CASES
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <div
-                    class="stat-number"
-                    id="dataDistricts"
-                >
-                    0
-                </div>
-
-                <div class="stat-label">
-                    DISTRICTS REPORTING
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <div
-                    class="stat-number"
-                    id="dataHighest"
-                >
-                    0
-                </div>
-
-                <div class="stat-label">
-                    HIGHEST DISTRICT COUNT
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <div
-                    class="stat-number"
-                    id="dataAverage"
-                >
-                    0
-                </div>
-
-                <div class="stat-label">
-                    AVERAGE PER DISTRICT
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- DATA CONTENT -->
-
-        <div class="data-grid">
-
-
-            <!-- TABLE -->
-
-            <div class="panel">
-
-                <h2>
-                    District reports
-                </h2>
-
-                <div class="panel-description">
-
-                    Reports for the currently selected year.
-                    The table updates automatically when the
-                    year on the map changes.
+                    <p>
+                        Explore, update and manage the district-level
+                        surveillance dataset.
+                    </p>
 
                 </div>
 
 
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    District
-                                </th>
-
-                                <th>
-                                    Province
-                                </th>
-
-                                <th>
-                                    Year
-                                </th>
-
-                                <th>
-                                    Cases
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody
-                            id="dataTable"
-                        ></tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-
-            <!-- CONTROLS -->
-
-            <div class="panel">
-
-                <h2>
-                    Dataset
-                </h2>
-
-                <div class="panel-description">
-
-                    Replace the sample dataset with your own
-                    district-level records.
-
-                    <br><br>
-
-                    Format:
-
-                    <br>
-
-                    <span
-                        class="mono"
-                    >
-                        district,province,lat,lon,year,cases
-                    </span>
-
-                </div>
-
-
-                <textarea
-                    id="csvInput"
-                ></textarea>
-
-
-                <button
-                    class="action-button"
-                    id="applyData"
-                    type="button"
-                >
-                    APPLY DATA
+                <button class="close-data" id="closeData" type="button">
+                    ← Back to map
                 </button>
 
-
-                <div
-                    id="dataMessage"
-                    class="help"
-                ></div>
+            </div>
 
 
-                <!-- GEOJSON -->
+            <!-- STATS -->
 
-                <div class="upload-box">
+            <div class="stats">
 
-                    <label
-                        class="upload-label"
-                    >
-                        District boundary map
-                    </label>
+                <div class="stat-card">
+
+                    <div class="stat-number" id="dataTotalCases">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        TOTAL CASES
+                    </div>
+
+                </div>
 
 
-                    <input
-                        type="file"
-                        id="geoJsonUpload"
-                        accept=".geojson,.json,application/geo+json,application/json"
-                    >
+                <div class="stat-card">
+
+                    <div class="stat-number" id="dataDistricts">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        DISTRICTS REPORTING
+                    </div>
+
+                </div>
 
 
-                    <div class="help">
+                <div class="stat-card">
 
-                        Upload a Pakistan district GeoJSON file.
-                        Each district should have a name property
-                        such as <span class="mono">district</span>,
-                        <span class="mono">name</span>, or
-                        <span class="mono">NAME_3</span>.
+                    <div class="stat-number" id="dataHighest">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        HIGHEST DISTRICT COUNT
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="dataAverage">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        AVERAGE PER DISTRICT
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DATA CONTENT -->
+
+            <div class="data-grid">
+
+
+                <!-- TABLE -->
+
+                <div class="panel">
+
+                    <h2>
+                        District reports
+                    </h2>
+
+                    <div class="panel-description">
+
+                        Reports for the currently selected year.
+                        The table updates automatically when the
+                        year on the map changes.
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        District
+                                    </th>
+
+                                    <th>
+                                        Province
+                                    </th>
+
+                                    <th>
+                                        Year
+                                    </th>
+
+                                    <th>
+                                        Cases
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="dataTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTROLS -->
+
+                <div class="panel">
+
+                    <h2>
+                        Dataset
+                    </h2>
+
+                    <div class="panel-description">
+
+                        Replace the sample dataset with your own
+                        district-level records.
 
                         <br><br>
 
-                        Uploaded boundaries are shaded using
-                        the selected year's case density.
+                        Format:
+
+                        <br>
+
+                        <span class="mono">
+                            district,province,lat,lon,year,cases
+                        </span>
 
                     </div>
 
-                    <div
-                        id="geoJsonStatus"
-                        class="help"
-                    >
-                        The permanent GeoJSON is loaded automatically.
+
+                    <textarea id="csvInput"></textarea>
+
+
+                    <button class="action-button" id="applyData" type="button">
+                        APPLY DATA
+                    </button>
+
+
+                    <div id="dataMessage" class="help"></div>
+
+
+                    <!-- GEOJSON -->
+
+                    <div class="upload-box">
+
+                        <label class="upload-label">
+                            District boundary map
+                        </label>
+
+
+                        <input type="file" id="geoJsonUpload"
+                            accept=".geojson,.json,application/geo+json,application/json">
+
+
+                        <div class="help">
+
+                            Upload a Pakistan district GeoJSON file.
+                            Each district should have a name property
+                            such as <span class="mono">district</span>,
+                            <span class="mono">name</span>, or
+                            <span class="mono">NAME_3</span>.
+
+                            <br><br>
+
+                            Uploaded boundaries are shaded using
+                            the selected year's case density.
+
+                        </div>
+
+                        <div id="geoJsonStatus" class="help">
+                            The permanent GeoJSON is loaded automatically.
+                        </div>
+
                     </div>
 
                 </div>
@@ -2135,219 +2400,245 @@ input[type="file"] {
 
     </div>
 
-</div>
 
-
-<!-- =====================================================
+    <!-- =====================================================
      ORGANIZATIONS PANEL
      ===================================================== -->
 
-<div id="orgPanel">
+    <div id="orgPanel">
 
-    <div class="data-page">
+        <div class="data-page">
 
-        <div class="data-header">
-
-            <div>
-
-                <h1>
-                    Partner Organizations
-                </h1>
-
-                <p>
-                    The organizations working alongside Pakistan's
-                    government to end polio transmission.
-                </p>
-
-            </div>
-
-
-            <button
-                class="close-data"
-                id="closeOrg"
-                type="button"
-            >
-                ← Back to map
-            </button>
-
-        </div>
-
-
-        <div class="org-grid">
-
-            <div class="org-card">
-
-                <div class="org-icon">WHO</div>
+            <div class="data-header">
 
                 <div>
-                    <div class="org-role">
-                        Technical &amp; surveillance lead
+
+                    <div class="data-eyebrow">
+                        <span>Global Partnership</span>
                     </div>
-                    <h3>World Health Organization</h3>
+
+                    <h1>
+                        Partner Organizations
+                    </h1>
+
+                    <p>
+                        The organizations working alongside Pakistan's
+                        government to end polio transmission.
+                    </p>
+
                 </div>
 
-                <p>
-                    Provides technical guidance, disease surveillance
-                    systems, and outbreak response coordination for
-                    the national program.
-                </p>
+
+                <button class="close-data" id="closeOrg" type="button">
+                    ← Back to map
+                </button>
 
             </div>
 
 
-            <div class="org-card">
+            <div class="org-group">
 
-                <div class="org-icon">UN</div>
-
-                <div>
-                    <div class="org-role">
-                        Vaccines &amp; logistics
-                    </div>
-                    <h3>UNICEF</h3>
+                <div class="org-group-label">
+                    <span>Global Health Coordination</span>
                 </div>
 
-                <p>
-                    Manages vaccine supply and cold-chain logistics,
-                    and leads community engagement to build vaccine
-                    acceptance.
-                </p>
+                <div class="org-grid">
+
+                    <div class="org-card">
+
+                        <div class="org-icon">WHO</div>
+
+                        <div>
+                            <div class="org-role">
+                                Technical &amp; surveillance lead
+                            </div>
+                            <h3>World Health Organization</h3>
+                        </div>
+
+                        <p>
+                            Provides technical guidance, disease surveillance
+                            systems, and outbreak response coordination for
+                            the national program.
+                        </p>
+
+                    </div>
+
+
+                    <div class="org-card">
+
+                        <div class="org-icon">UN</div>
+
+                        <div>
+                            <div class="org-role">
+                                Vaccines &amp; logistics
+                            </div>
+                            <h3>UNICEF</h3>
+                        </div>
+
+                        <p>
+                            Manages vaccine supply and cold-chain logistics,
+                            and leads community engagement to build vaccine
+                            acceptance.
+                        </p>
+
+                    </div>
+
+
+                    <div class="org-card">
+
+                        <div class="org-icon">CDC</div>
+
+                        <div>
+                            <div class="org-role">
+                                Laboratory &amp; epidemiology
+                            </div>
+                            <h3>U.S. CDC</h3>
+                        </div>
+
+                        <p>
+                            Supports laboratory confirmation of cases,
+                            field epidemiology, and technical staffing for
+                            outbreak investigations.
+                        </p>
+
+                    </div>
+
+                </div>
 
             </div>
 
 
-            <div class="org-card">
+            <div class="org-group">
 
-                <div class="org-icon">RI</div>
-
-                <div>
-                    <div class="org-role">
-                        Grassroots &amp; funding
-                    </div>
-                    <h3>Rotary International</h3>
+                <div class="org-group-label">
+                    <span>Funding &amp; Grassroots Support</span>
                 </div>
 
-                <p>
-                    Mobilizes volunteers and community fundraising
-                    through PolioPlus, a driving force behind the
-                    eradication effort since 1988.
-                </p>
+                <div class="org-grid">
+
+                    <div class="org-card">
+
+                        <div class="org-icon">RI</div>
+
+                        <div>
+                            <div class="org-role">
+                                Grassroots &amp; funding
+                            </div>
+                            <h3>Rotary International</h3>
+                        </div>
+
+                        <p>
+                            Mobilizes volunteers and community fundraising
+                            through PolioPlus, a driving force behind the
+                            eradication effort since 1988.
+                        </p>
+
+                    </div>
+
+
+                    <div class="org-card">
+
+                        <div class="org-icon">BMGF</div>
+
+                        <div>
+                            <div class="org-role">
+                                Core funding partner
+                            </div>
+                            <h3>Gates Foundation</h3>
+                        </div>
+
+                        <p>
+                            A major funder of vaccine research, procurement,
+                            and program delivery costs across the campaign.
+                        </p>
+
+                    </div>
+
+
+                    <div class="org-card">
+
+                        <div class="org-icon">GAVI</div>
+
+                        <div>
+                            <div class="org-role">
+                                Immunization financing
+                            </div>
+                            <h3>Gavi, the Vaccine Alliance</h3>
+                        </div>
+
+                        <p>
+                            Helps finance routine immunization delivery and
+                            broader health-system strengthening that supports
+                            polio eradication.
+                        </p>
+
+                    </div>
+
+                </div>
 
             </div>
 
 
-            <div class="org-card">
+            <div class="org-group">
 
-                <div class="org-icon">CDC</div>
-
-                <div>
-                    <div class="org-role">
-                        Laboratory &amp; epidemiology
-                    </div>
-                    <h3>U.S. CDC</h3>
+                <div class="org-group-label">
+                    <span>National Leadership</span>
                 </div>
 
-                <p>
-                    Supports laboratory confirmation of cases,
-                    field epidemiology, and technical staffing for
-                    outbreak investigations.
-                </p>
+                <div class="org-grid">
+
+                    <div class="org-card">
+
+                        <div class="org-icon">NEOC</div>
+
+                        <div>
+                            <div class="org-role">
+                                National program lead
+                            </div>
+                            <h3>Pakistan Polio Eradication Programme</h3>
+                        </div>
+
+                        <p>
+                            The government's National Emergency Operations
+                            Centre plans campaigns and coordinates frontline
+                            workers across every province.
+                        </p>
+
+                    </div>
+
+                </div>
 
             </div>
 
 
-            <div class="org-card">
-
-                <div class="org-icon">BMGF</div>
-
-                <div>
-                    <div class="org-role">
-                        Core funding partner
-                    </div>
-                    <h3>Gates Foundation</h3>
-                </div>
-
-                <p>
-                    A major funder of vaccine research, procurement,
-                    and program delivery costs across the campaign.
-                </p>
-
+            <div class="org-note">
+                Together these partners make up the Global Polio
+                Eradication Initiative (GPEI), the public-private
+                partnership coordinating the worldwide effort to end
+                polio.
             </div>
 
-
-            <div class="org-card">
-
-                <div class="org-icon">GAVI</div>
-
-                <div>
-                    <div class="org-role">
-                        Immunization financing
-                    </div>
-                    <h3>Gavi, the Vaccine Alliance</h3>
-                </div>
-
-                <p>
-                    Helps finance routine immunization delivery and
-                    broader health-system strengthening that supports
-                    polio eradication.
-                </p>
-
-            </div>
-
-
-            <div class="org-card">
-
-                <div class="org-icon">NEOC</div>
-
-                <div>
-                    <div class="org-role">
-                        National program lead
-                    </div>
-                    <h3>Pakistan Polio Eradication Programme</h3>
-                </div>
-
-                <p>
-                    The government's National Emergency Operations
-                    Centre plans campaigns and coordinates frontline
-                    workers across every province.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="org-note">
-            Together these partners make up the Global Polio
-            Eradication Initiative (GPEI), the public-private
-            partnership coordinating the worldwide effort to end
-            polio.
         </div>
 
     </div>
 
-</div>
 
-
-<!-- =====================================================
+    <!-- =====================================================
      LEAFLET
      ===================================================== -->
 
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script
-    src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"
-></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
 
 
-<script>
+    <script>
 
-/* =========================================================
-   SAMPLE DATA
-   ========================================================= */
+        /* =========================================================
+           SAMPLE DATA
+           ========================================================= */
 
-const SAMPLE_CSV = `Karachi,Sindh,24.86,67.01,2019,2
+        const SAMPLE_CSV = `Karachi,Sindh,24.86,67.01,2019,2
 Hyderabad,Sindh,25.40,68.37,2019,1
 Quetta,Balochistan,30.18,66.99,2019,3
 Zhob,Balochistan,31.34,69.45,2019,4
@@ -2399,1789 +2690,197 @@ Multan,Punjab,30.20,71.47,2024,1
 Gilgit,Gilgit-Baltistan,35.92,74.31,2024,1`;
 
 
-/* =========================================================
-   APPLICATION STATE
-   ========================================================= */
+        /* =========================================================
+           APPLICATION STATE
+           ========================================================= */
 
-let rows = [];
+        let rows = [];
 
-let years = [];
+        let years = [];
 
-let selectedYear = 2024;
+        let selectedYear = 2024;
 
-let districtLayer = null;
+        let districtLayer = null;
 
-let nationalBorderLayer = null;
+        let nationalBorderLayer = null;
 
-let nationalBorderFromFile = false;
+        let nationalBorderFromFile = false;
 
-let caseLayer = null;
+        let caseLayer = null;
 
-let caseLocations = [];
+        let caseLocations = [];
 
-let map;
+        let map;
 
 
-/* =========================================================
-   PAKISTAN FOCUS BOUNDS
-   ========================================================= */
-
-/*
-   Approximate national bounding box, used to focus
-   the initial view and to softly lock panning to
-   Pakistan and its immediate surroundings.
-*/
-
-const PAKISTAN_BOUNDS =
-    L.latLngBounds(
-        [ 22.8, 59.8 ],
-        [ 37.3, 78.0 ]
-    );
-
-
-/* =========================================================
-   ELEMENTS
-   ========================================================= */
-
-const loader =
-    document.getElementById("loader");
-
-const yearSlider =
-    document.getElementById("yearSlider");
-
-const yearDisplay =
-    document.getElementById("yearDisplay");
-
-const sliderYear =
-    document.getElementById("sliderYear");
-
-const sliderTotal =
-    document.getElementById("sliderTotal");
-
-const yearTicks =
-    document.getElementById("yearTicks");
-
-const dataPanel =
-    document.getElementById("dataPanel");
-
-const dataButton =
-    document.getElementById("dataButton");
-
-const mapButton =
-    document.getElementById("mapButton");
-
-const closeData =
-    document.getElementById("closeData");
-
-const dataTable =
-    document.getElementById("dataTable");
-
-const orgPanel =
-    document.getElementById("orgPanel");
-
-const orgButton =
-    document.getElementById("orgButton");
-
-const closeOrg =
-    document.getElementById("closeOrg");
-
-
-/* =========================================================
-   PARSE CSV
-   ========================================================= */
-
-function parseCSV(text) {
-
-    return text
-
-        .split(/\r?\n/)
-
-        .map(
-            line =>
-                line.trim()
-        )
-
-        .filter(Boolean)
-
-        .map(line => {
-
-            const parts =
-                line
-                    .split(",")
-                    .map(
-                        value =>
-                            value.trim()
-                    );
-
-
-            if (parts.length < 6) {
-
-                return null;
-
-            }
-
-
-            return {
-
-                district:
-                    parts[0],
-
-                province:
-                    parts[1],
-
-                lat:
-                    parseFloat(parts[2]),
-
-                lon:
-                    parseFloat(parts[3]),
-
-                year:
-                    parseInt(parts[4]),
-
-                cases:
-                    parseInt(parts[5])
-
-            };
-
-        })
-
-        .filter(
-            row =>
-                row &&
-                !isNaN(row.lat) &&
-                !isNaN(row.lon) &&
-                !isNaN(row.year) &&
-                !isNaN(row.cases)
-        );
-
-}
-
-
-/* =========================================================
-   NORMALIZE DISTRICT
-   ========================================================= */
-
-function normalizeDistrict(name) {
-
-    return String(name || "")
-
-        .toLowerCase()
-
-        .trim()
-
-        .replace(
-            /&/g,
-            "and"
-        )
-
-        .replace(
-            /[^a-z0-9]/g,
-            ""
-        );
-
-}
-
-
-/* =========================================================
-   LOAD DATA
-   ========================================================= */
-
-function loadData(csv) {
-
-    rows =
-        parseCSV(csv);
-
-
-    years =
-        [
-            ...new Set(
-                rows.map(
-                    row =>
-                        row.year
-                )
-            )
-        ]
-        .sort(
-            (a,b) =>
-                a - b
-        );
-
-
-    if (!years.length) {
-
-        return;
-
-    }
-
-
-    yearSlider.min = 0;
-
-    yearSlider.max =
-        years.length - 1;
-
-    yearSlider.value =
-        years.length - 1;
-
-
-    selectedYear =
-        years[
-            years.length - 1
-        ];
-
-
-    yearTicks.innerHTML =
-        years
-            .map(
-                year =>
-                    `<span>${year}</span>`
-            )
-            .join("");
-
-
-    updateMap();
-
-    updateDataPanel();
-
-}
-
-
-/* =========================================================
-   PERMANENT CASE LOCATION CSV
-   ========================================================= */
-
-function parseCaseLocationsCSV(text) {
-
-    const lines =
-        text
-            .split(/\r?\n/)
-            .map(line => line.trim())
-            .filter(Boolean);
-
-    if (lines.length < 2) {
-        return [];
-    }
-
-    const header =
-        lines[0]
-            .split(",")
-            .map(value => value.trim().toLowerCase());
-
-    const index = name => header.indexOf(name);
-
-    const caseIdIndex = index("case_id");
-    const districtIndex = index("district");
-    const provinceIndex = index("province");
-    const latitudeIndex = index("latitude");
-    const longitudeIndex = index("longitude");
-    const yearIndex = index("year");
-
-    if (
-        districtIndex === -1 ||
-        provinceIndex === -1 ||
-        latitudeIndex === -1 ||
-        longitudeIndex === -1 ||
-        yearIndex === -1
-    ) {
-        throw new Error(
-            "Case CSV must contain district, province, latitude, longitude and year columns."
-        );
-    }
-
-    return lines
-        .slice(1)
-        .map(line => {
-
-            const parts =
-                line.split(",").map(value => value.trim());
-
-            const latitude =
-                parseFloat(parts[latitudeIndex]);
-
-            const longitude =
-                parseFloat(parts[longitudeIndex]);
-
-            const year =
-                parseInt(parts[yearIndex]);
-
-            if (
-                !parts[districtIndex] ||
-                !parts[provinceIndex] ||
-                isNaN(latitude) ||
-                isNaN(longitude) ||
-                isNaN(year)
-            ) {
-                return null;
-            }
-
-            return {
-                caseId:
-                    caseIdIndex >= 0
-                        ? parts[caseIdIndex]
-                        : "CASE-" + Math.random().toString(36).slice(2),
-
-                district:
-                    parts[districtIndex],
-
-                province:
-                    parts[provinceIndex],
-
-                lat:
-                    latitude,
-
-                lon:
-                    longitude,
-
-                year:
-                    year
-            };
-
-        })
-        .filter(Boolean);
-
-}
-
-
-function loadCaseLocationData(text) {
-
-    caseLocations =
-        parseCaseLocationsCSV(text);
-
-    const aggregate = {};
-
-    caseLocations.forEach(caseRecord => {
-
-        const key =
-            `${normalizeDistrict(caseRecord.district)}|${caseRecord.year}`;
-
-        if (!aggregate[key]) {
-
-            aggregate[key] = {
-
-                district:
-                    caseRecord.district,
-
-                province:
-                    caseRecord.province,
-
-                lat:
-                    caseRecord.lat,
-
-                lon:
-                    caseRecord.lon,
-
-                year:
-                    caseRecord.year,
-
-                cases:
-                    0
-
-            };
-
-        }
-
-        aggregate[key].cases += 1;
-
-    });
-
-    rows =
-        Object.values(aggregate);
-
-    years =
-        [...new Set(
-            rows.map(
-                row => row.year
-            )
-        )]
-        .sort(
-            (a,b) => a-b
-        );
-
-    if (!years.length) {
-        return;
-    }
-
-    yearSlider.min = 0;
-    yearSlider.max = years.length - 1;
-    yearSlider.value = years.length - 1;
-    selectedYear = years[years.length - 1];
-
-    yearTicks.innerHTML =
-        years
-            .map(
-                year => `<span>${year}</span>`
-            )
-            .join("");
-
-    updateCaseMarkers();
-    updateMap();
-    updateDataPanel();
-
-}
-
-
-function loadPermanentCaseLocations() {
-
-    fetch("polio_case_locations_fake.csv")
-
-        .then(response => {
-
-            if (!response.ok) {
-                throw new Error(
-                    "Could not load polio_case_locations_fake.csv"
-                );
-            }
-
-            return response.text();
-
-        })
-
-        .then(csv => {
-
-            loadCaseLocationData(csv);
-
-            console.log(
-                `Loaded ${caseLocations.length} synthetic case locations.`
-            );
-
-            const message =
-                document.getElementById("dataMessage");
-
-            if (message) {
-                message.textContent =
-                    `Loaded ${caseLocations.length} synthetic case locations.`;
-                message.style.color = "#8fc8ea";
-            }
-
-        })
-
-        .catch(error => {
-
-            console.error(
-                "Case CSV loading error:",
-                error
-            );
-
-            const message =
-                document.getElementById("dataMessage");
-
-            if (message) {
-                message.textContent =
-                    "Could not load the case-location CSV.";
-                message.style.color = "#e59b9b";
-            }
-
-        });
-
-}
-
-
-/* =========================================================
-   CASE LOCATION MARKERS
-   ========================================================= */
-
-function updateCaseMarkers() {
-
-    if (!map) {
-        return;
-    }
-
-    if (caseLayer) {
-        map.removeLayer(caseLayer);
-    }
-
-    caseLayer =
-        L.layerGroup();
-
-    caseLocations
-        .filter(
-            caseRecord =>
-                caseRecord.year === selectedYear
-        )
-        .forEach(caseRecord => {
-
-            const marker =
-                L.circleMarker(
-                    [
-                        caseRecord.lat,
-                        caseRecord.lon
-                    ],
-                    {
-                        radius: 5,
-                        stroke: false,
-                        color: "#0d3b66",
-                        weight: 0,
-                        fillColor: "#0d3b66",
-                        fillOpacity: 1
-                    }
-                );
-
-            marker.addTo(caseLayer);
-
-        });
-
-    caseLayer.addTo(map);
-
-}
-
-
-/* =========================================================
-   GET SELECTED DATA
-   ========================================================= */
-
-function selectedRows() {
-
-    return rows.filter(
-        row =>
-            row.year ===
-            selectedYear
-    );
-
-}
-
-
-/* =========================================================
-   GET DISTRICT CASES
-   ========================================================= */
-
-function districtCases() {
-
-    const result = {};
-
-    selectedRows()
-        .forEach(row => {
-
-            const key =
-                normalizeDistrict(
-                    row.district
-                );
-
-
-            if (!result[key]) {
-
-                result[key] = {
-
-                    name:
-                        row.district,
-
-                    province:
-                        row.province,
-
-                    cases:
-                        0
-
-                };
-
-            }
-
-
-            result[key].cases +=
-                row.cases;
-
-        });
-
-
-    return result;
-
-}
-
-
-/* =========================================================
-   COLOR INTERPOLATION
-   ========================================================= */
-
-function hexToRgb(hex) {
-
-    hex =
-        hex.replace(
-            "#",
-            ""
-        );
-
-
-    return {
-
-        r:
-            parseInt(
-                hex.substring(0,2),
-                16
-            ),
-
-        g:
-            parseInt(
-                hex.substring(2,4),
-                16
-            ),
-
-        b:
-            parseInt(
-                hex.substring(4,6),
-                16
-            )
-
-    };
-
-}
-
-
-function rgbToHex(r,g,b) {
-
-    return "#" +
-
-        [
-            r,
-            g,
-            b
-        ]
-
-        .map(
-            value =>
-                Math.round(value)
-                    .toString(16)
-                    .padStart(2,"0")
-        )
-
-        .join("");
-
-}
-
-
-function interpolateColor(
-    start,
-    end,
-    amount
-) {
-
-    const a =
-        hexToRgb(start);
-
-    const b =
-        hexToRgb(end);
-
-
-    return rgbToHex(
-
-        a.r +
-        (
-            b.r -
-            a.r
-        ) *
-        amount,
-
-        a.g +
-        (
-            b.g -
-            a.g
-        ) *
-        amount,
-
-        a.b +
-        (
-            b.b -
-            a.b
-        ) *
-        amount
-
-    );
-
-}
-
-
-/* =========================================================
-   DENSITY COLOR
-   ========================================================= */
-
-function densityColor(
-    cases,
-    max
-) {
-
-    if (
-        !cases ||
-        cases <= 0
-    ) {
-
-        return "#dceff9";
-
-    }
-
-
-    if (!max) {
-
-        return "#dceff9";
-
-    }
-
-
-    const intensity =
-        Math.sqrt(
-            cases / max
-        );
-
-
-    return interpolateColor(
-        "#dceff9",
-        "#0d3b66",
-        intensity
-    );
-
-}
-
-
-/* =========================================================
-   INITIALIZE MAP
-   ========================================================= */
-
-function initializeMap() {
-
-    map =
-        L.map(
-            "map",
-            {
-
-                zoomControl:
-                    true,
-
-                attributionControl:
-                    true,
-
-                minZoom:
-                    5,
-
-                maxBounds:
-                    PAKISTAN_BOUNDS.pad(0.25),
-
-                maxBoundsViscosity:
-                    0.85
-
-            }
-        );
-
-
-    /*
-       Pakistan initial view. The map opens
-       fitted tightly to the national bounds
-       and stays focused there; loadGeoJSON()
-       refines this further once the district
-       boundaries are in.
-    */
-
-    map.fitBounds(
-        PAKISTAN_BOUNDS,
-        {
-            padding:
-                [ 20, 20 ]
-        }
-    );
-
-
-    /*
-       Satellite imagery.
-       Esri World Imagery is used as the
-       satellite base layer.
-    */
-
-    const satellite =
-        L.tileLayer(
-
-            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-
-            {
-
-                maxZoom:
-                    18,
-
-                attribution:
-                    "Tiles © Esri"
-
-            }
-
-        );
-
-
-    satellite.addTo(map);
-
-
-    /*
-       Add a subtle dark layer over the
-       satellite imagery so blue density
-       colors remain visible.
-    */
-
-    L.tileLayer(
-
-        "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
-
-        {
-
-            opacity:
-                0.18,
-
-            maxZoom:
-                19,
-
-            attribution:
-                "&copy; CARTO"
-
-        }
-
-    ).addTo(map);
-
-
-    /*
-       Pakistan center marker is not used.
-       The map remains visually clean.
-    */
-
-}
-
-
-/* =========================================================
-   GEOJSON STYLE
-   ========================================================= */
-
-function styleDistrict(
-    feature
-) {
-
-    const properties =
-        feature.properties ||
-        {};
-
-
-    const district =
-        properties.district ||
-        properties.DISTRICT ||
-        properties.name ||
-        properties.NAME ||
-        properties.NAME_3 ||
-        properties.DIST_NAME ||
-        properties.ADM2_EN ||
-        properties.shapeName ||
-        "";
-
-
-    const casesData =
-        districtCases();
-
-
-    const key =
-        normalizeDistrict(
-            district
-        );
-
-
-    const values =
-        Object.values(
-            casesData
-        );
-
-
-    const max =
-        values.length
-
-            ? Math.max(
-                ...values.map(
-                    item =>
-                        item.cases
-                )
-            )
-
-            : 0;
-
-
-    const record =
-        casesData[key];
-
-
-    return {
-
-        fillColor:
-            densityColor(
-                record
-                    ? record.cases
-                    : 0,
-                max
-            ),
-
-        fillOpacity:
-            record
-                ? 0.00
-                : 0.00,
-
-        color:
-            "rgba(255,255,255,.75)",
-
-        weight:
-            0.0
-
-    };
-
-}
-
-
-/* =========================================================
-   GEOJSON TOOLTIP
-   ========================================================= */
-
-function onEachDistrict(
-    feature,
-    layer
-) {
-
-    const properties =
-        feature.properties ||
-        {};
-
-
-    const district =
-        properties.district ||
-        properties.DISTRICT ||
-        properties.name ||
-        properties.NAME ||
-        properties.NAME_3 ||
-        properties.DIST_NAME ||
-        properties.ADM2_EN ||
-        properties.shapeName ||
-        "Unknown district";
-
-
-    const casesData =
-        districtCases();
-
-
-    const record =
-        casesData[
-            normalizeDistrict(
-                district
-            )
-        ];
-
-
-    const cases =
-        record
-            ? record.cases
-            : 0;
-
-
-    const province =
-        record
-            ? record.province
-            : "";
-
-
-    layer.bindTooltip(
-
-        `
-            <strong>
-                ${escapeHtml(district)}
-            </strong>
-
-            ${
-                province
-                    ? `<br>${escapeHtml(province)}`
-                    : ""
-            }
-
-            <br>
-
-            Cases:
-            <strong>
-                ${cases}
-            </strong>
-
-        `,
-
-        {
-
-            sticky:
-                true,
-
-            direction:
-                "top",
-
-            className:
-                "district-tooltip"
-
-        }
-
-    );
-
-
-    layer.on({
-
-        mouseover:
-            event => {
-
-                event.target.setStyle({
-
-                    weight:
-                        2,
-
-                    color:
-                        "#ffffff",
-
-                    fillOpacity:
-                        0.86
-
-                });
-
-            },
-
-
-        mouseout:
-            event => {
-
-                districtLayer.resetStyle(
-                    event.target
-                );
-
-            }
-
-    });
-
-}
-
-
-/* =========================================================
-   LOAD GEOJSON
-   ========================================================= */
-
-function loadGeoJSON(
-    geojson
-) {
-
-    if (districtLayer) {
-
-        map.removeLayer(
-            districtLayer
-        );
-
-        districtLayer =
-            null;
-
-    }
-
-
-    districtLayer =
-        L.geoJSON(
-
-            geojson,
-
-            {
-
-                style:
-                    styleDistrict,
-
-                onEachFeature:
-                    onEachDistrict
-
-            }
-
-        );
-
-
-    districtLayer.addTo(
-        map
-    );
-
-
-    try {
-
-        map.fitBounds(
-            districtLayer.getBounds(),
-            {
-
-                padding:
-                    [60,60],
-
-                maxZoom:
-                    7
-
-            }
-        );
-
-    }
-
-    catch(error) {
-
-        console.warn(
-            "Could not fit GeoJSON bounds.",
-            error
-        );
-
-    }
-
-
-    drawNationalBorder(
-        geojson
-    );
-
-}
-
-
-/* =========================================================
-   NATIONAL BORDER (DOTTED)
-   ========================================================= */
-
-/*
-   District polygons are usually simplified
-   independently, so their shared edges rarely
-   line up exactly. Unioning them directly leaves
-   thin gaps along almost every internal boundary,
-   which then get traced as if they were borders
-   too. To get a clean *national* outline only:
-
-     1. Buffer every district outward a touch so
-        neighbouring edges overlap.
-     2. Dissolve the whole set into one shape.
-     3. Shrink it back in by the same amount.
-     4. Keep only the substantial landmass(es),
-        dropping any leftover slivers.
-
-   Falls back quietly if turf is unavailable or
-   the geometry can't be merged.
-*/
-
-function drawNationalBorder(
-    geojson
-) {
-
-    if (nationalBorderFromFile) {
+        /* =========================================================
+           PAKISTAN FOCUS BOUNDS
+           ========================================================= */
 
         /*
-           A dedicated ADM0 boundary file already
-           loaded successfully — that's the real
-           national outline, so don't overwrite it
-           with a district-derived approximation.
+           Approximate national bounding box, used to focus
+           the initial view and to softly lock panning to
+           Pakistan and its immediate surroundings.
         */
 
-        return;
-
-    }
-
-
-    if (nationalBorderLayer) {
-
-        map.removeLayer(
-            nationalBorderLayer
-        );
-
-        nationalBorderLayer =
-            null;
-
-    }
-
-
-    if (
-        typeof turf === "undefined" ||
-        !geojson ||
-        !geojson.features ||
-        !geojson.features.length
-    ) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const polygons =
-            geojson.features.filter(
-                feature =>
-                    feature.geometry &&
-                    (
-                        feature.geometry.type === "Polygon" ||
-                        feature.geometry.type === "MultiPolygon"
-                    )
+        const PAKISTAN_BOUNDS =
+            L.latLngBounds(
+                [22.8, 59.8],
+                [37.3, 78.0]
             );
 
 
-        if (!polygons.length) {
+        /* =========================================================
+           ELEMENTS
+           ========================================================= */
 
-            return;
+        const loader =
+            document.getElementById("loader");
 
-        }
+        const yearSlider =
+            document.getElementById("yearSlider");
+
+        const yearDisplay =
+            document.getElementById("yearDisplay");
+
+        const sliderYear =
+            document.getElementById("sliderYear");
+
+        const sliderTotal =
+            document.getElementById("sliderTotal");
+
+        const yearTicks =
+            document.getElementById("yearTicks");
+
+        const dataPanel =
+            document.getElementById("dataPanel");
+
+        const dataButton =
+            document.getElementById("dataButton");
+
+        const mapButton =
+            document.getElementById("mapButton");
+
+        const closeData =
+            document.getElementById("closeData");
+
+        const dataTable =
+            document.getElementById("dataTable");
+
+        const orgPanel =
+            document.getElementById("orgPanel");
+
+        const orgButton =
+            document.getElementById("orgButton");
+
+        const closeOrg =
+            document.getElementById("closeOrg");
 
 
-        /*
-           Seam-closing buffer, in kilometers.
-           Small relative to district size, large
-           enough to bridge simplification gaps.
-        */
+        /* =========================================================
+           PARSE CSV
+           ========================================================= */
 
-        const SEAM_KM = 2;
+        function parseCSV(text) {
 
+            return text
 
-        const buffered =
-            polygons
+                .split(/\r?\n/)
+
                 .map(
-                    feature => {
+                    line =>
+                        line.trim()
+                )
 
-                        try {
+                .filter(Boolean)
 
-                            return turf.buffer(
-                                feature,
-                                SEAM_KM,
-                                { units: "kilometers" }
+                .map(line => {
+
+                    const parts =
+                        line
+                            .split(",")
+                            .map(
+                                value =>
+                                    value.trim()
                             );
 
-                        }
 
-                        catch(error) {
+                    if (parts.length < 6) {
 
-                            return null;
-
-                        }
+                        return null;
 
                     }
-                )
-                .filter(Boolean);
 
 
-        if (!buffered.length) {
+                    return {
 
-            return;
+                        district:
+                            parts[0],
 
-        }
+                        province:
+                            parts[1],
 
+                        lat:
+                            parseFloat(parts[2]),
 
-        let dissolved =
-            turf.union(
-                turf.featureCollection(
-                    buffered
-                )
-            );
+                        lon:
+                            parseFloat(parts[3]),
 
+                        year:
+                            parseInt(parts[4]),
 
-        if (!dissolved) {
+                        cases:
+                            parseInt(parts[5])
 
-            return;
+                    };
 
-        }
+                })
 
-
-        const shrunk =
-            turf.buffer(
-                dissolved,
-                -SEAM_KM,
-                { units: "kilometers" }
-            ) ||
-            dissolved;
-
-
-        /*
-           Split any remaining multi-part result
-           into individual polygons and keep only
-           ones large enough to be real landmass,
-           not leftover simplification slivers.
-        */
-
-        const parts =
-            shrunk.geometry.type === "Polygon"
-                ? [ shrunk ]
-                : turf.flatten(shrunk).features;
-
-
-        const areas =
-            parts.map(
-                part =>
-                    turf.area(part)
-            );
-
-
-        const maxArea =
-            Math.max(
-                ...areas
-            );
-
-
-        const significant =
-            parts.filter(
-                (part, index) =>
-                    areas[index] >
-                        maxArea * 0.02
-            );
-
-
-        if (!significant.length) {
-
-            return;
-
-        }
-
-
-        const outline =
-            significant.length === 1
-                ? significant[0]
-                : turf.combine(
-                    turf.featureCollection(
-                        significant
-                    )
-                );
-
-
-        renderBorderLayer(
-            outline
-        );
-
-    }
-
-    catch(error) {
-
-        console.warn(
-            "Could not derive national border.",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   RENDER BORDER LAYER
-   ========================================================= */
-
-/*
-   Shared renderer used both by the district-
-   derived outline above and by a dedicated ADM0
-   boundary file, if one is present (see
-   loadPermanentBorder below).
-*/
-
-function renderBorderLayer(
-    geojson
-) {
-
-    if (nationalBorderLayer) {
-
-        map.removeLayer(
-            nationalBorderLayer
-        );
-
-        nationalBorderLayer =
-            null;
-
-    }
-
-
-    nationalBorderLayer =
-        L.geoJSON(
-            geojson,
-            {
-
-                interactive:
-                    false,
-
-                style: {
-
-                    color:
-                        "#eaf6ff",
-
-                    weight:
-                        3,
-
-                    opacity:
-                        0.9,
-
-                    fill:
-                        false,
-
-                    lineCap:
-                        "round",
-
-                    dashArray:
-                        "1, 9"
-
-                }
-
-            }
-        );
-
-
-    nationalBorderLayer.addTo(
-        map
-    );
-
-}
-
-
-/* =========================================================
-   UPDATE MAP
-   ========================================================= */
-
-function updateMap() {
-
-    if (!map) {
-
-        return;
-
-    }
-
-
-    if (districtLayer) {
-
-        districtLayer.setStyle(
-            styleDistrict
-        );
-
-    }
-
-
-    const current =
-        selectedRows();
-
-
-    const total =
-        current.reduce(
-            (
-                sum,
-                row
-            ) =>
-                sum +
-                row.cases,
-
-            0
-        );
-
-
-    yearDisplay.textContent =
-        selectedYear;
-
-
-    sliderYear.textContent =
-        selectedYear;
-
-
-    sliderTotal.textContent =
-        `${total} case${total === 1 ? "" : "s"}`;
-
-}
-
-
-/* =========================================================
-   UPDATE DATA PANEL
-   ========================================================= */
-
-function updateDataPanel() {
-
-    const current =
-        selectedRows();
-
-
-    const total =
-        current.reduce(
-            (
-                sum,
-                row
-            ) =>
-                sum +
-                row.cases,
-
-            0
-        );
-
-
-    const districtCount =
-        new Set(
-            current.map(
-                row =>
-                    normalizeDistrict(
-                        row.district
-                    )
-            )
-        ).size;
-
-
-    const highest =
-        current.length
-            ? Math.max(
-                ...current.map(
+                .filter(
                     row =>
-                        row.cases
+                        row &&
+                        !isNaN(row.lat) &&
+                        !isNaN(row.lon) &&
+                        !isNaN(row.year) &&
+                        !isNaN(row.cases)
+                );
+
+        }
+
+
+        /* =========================================================
+           NORMALIZE DISTRICT
+           ========================================================= */
+
+        function normalizeDistrict(name) {
+
+            return String(name || "")
+
+                .toLowerCase()
+
+                .trim()
+
+                .replace(
+                    /&/g,
+                    "and"
                 )
-            )
-            : 0;
 
-
-    const average =
-        current.length
-            ? (
-                total /
-                current.length
-            ).toFixed(1)
-
-            : "0.0";
-
-
-    document.getElementById(
-        "dataTotalCases"
-    ).textContent =
-        total;
-
-
-    document.getElementById(
-        "dataDistricts"
-    ).textContent =
-        districtCount;
-
-
-    document.getElementById(
-        "dataHighest"
-    ).textContent =
-        highest;
-
-
-    document.getElementById(
-        "dataAverage"
-    ).textContent =
-        average;
-
-
-    const sorted =
-        [
-            ...current
-        ]
-        .sort(
-            (
-                a,
-                b
-            ) =>
-                b.cases -
-                a.cases
-        );
-
-
-    dataTable.innerHTML =
-        sorted
-            .map(
-                row => `
-
-                    <tr>
-
-                        <td>
-                            ${escapeHtml(
-                                row.district
-                            )}
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                row.province
-                            )}
-                        </td>
-
-                        <td>
-                            ${row.year}
-                        </td>
-
-                        <td>
-                            ${row.cases}
-                        </td>
-
-                    </tr>
-
-                `
-            )
-            .join("");
-
-
-}
-
-
-/* =========================================================
-   YEAR SLIDER
-   ========================================================= */
-
-yearSlider.addEventListener(
-    "input",
-    function() {
-
-        selectedYear =
-            years[
-                Number(
-                    yearSlider.value
-                )
-            ];
-
-
-        updateCaseMarkers();
-
-        updateMap();
-
-        updateDataPanel();
-
-    }
-);
-
-
-/* =========================================================
-   PANEL NAVIGATION (MAP / DATA / ORGANIZATIONS)
-   ========================================================= */
-
-function setActiveNav(
-    activeButton
-) {
-
-    [
-        mapButton,
-        dataButton,
-        orgButton
-    ]
-        .forEach(
-            button => {
-
-                button.classList.toggle(
-                    "active",
-                    button === activeButton
+                .replace(
+                    /[^a-z0-9]/g,
+                    ""
                 );
 
-            }
-        );
-
-}
+        }
 
 
-function openDataPanel() {
+        /* =========================================================
+           LOAD DATA
+           ========================================================= */
 
-    orgPanel.classList.remove(
-        "open"
-    );
-
-    dataPanel.classList.add(
-        "open"
-    );
-
-
-    setActiveNav(
-        dataButton
-    );
-
-
-    updateDataPanel();
-
-}
-
-
-function openOrgPanel() {
-
-    dataPanel.classList.remove(
-        "open"
-    );
-
-    orgPanel.classList.add(
-        "open"
-    );
-
-
-    setActiveNav(
-        orgButton
-    );
-
-}
-
-
-function closeAllPanels() {
-
-    dataPanel.classList.remove(
-        "open"
-    );
-
-    orgPanel.classList.remove(
-        "open"
-    );
-
-
-    setActiveNav(
-        mapButton
-    );
-
-
-    setTimeout(
-        () => {
-
-            map.invalidateSize();
-
-        },
-
-        450
-    );
-
-}
-
-
-dataButton.addEventListener(
-    "click",
-    openDataPanel
-);
-
-
-orgButton.addEventListener(
-    "click",
-    openOrgPanel
-);
-
-
-closeData.addEventListener(
-    "click",
-    closeAllPanels
-);
-
-
-closeOrg.addEventListener(
-    "click",
-    closeAllPanels
-);
-
-
-mapButton.addEventListener(
-    "click",
-    closeAllPanels
-);
-
-
-/* =========================================================
-   APPLY CSV DATA
-   ========================================================= */
-
-document.getElementById(
-    "applyData"
-).addEventListener(
-    "click",
-    function() {
-
-        const input =
-            document.getElementById(
-                "csvInput"
-            );
-
-
-        const message =
-            document.getElementById(
-                "dataMessage"
-            );
-
-
-        try {
-
-            const parsed =
-                parseCSV(
-                    input.value
-                );
-
-
-            if (!parsed.length) {
-
-                throw new Error(
-                    "No valid rows."
-                );
-
-            }
-
+        function loadData(csv) {
 
             rows =
-                parsed;
+                parseCSV(csv);
 
 
             years =
@@ -4193,15 +2892,23 @@ document.getElementById(
                         )
                     )
                 ]
-                .sort(
-                    (a,b) =>
-                        a-b
-                );
+                    .sort(
+                        (a, b) =>
+                            a - b
+                    );
 
+
+            if (!years.length) {
+
+                return;
+
+            }
+
+
+            yearSlider.min = 0;
 
             yearSlider.max =
                 years.length - 1;
-
 
             yearSlider.value =
                 years.length - 1;
@@ -4209,7 +2916,7 @@ document.getElementById(
 
             selectedYear =
                 years[
-                    years.length - 1
+                years.length - 1
                 ];
 
 
@@ -4226,327 +2933,1910 @@ document.getElementById(
 
             updateDataPanel();
 
-
-            message.textContent =
-                `Applied ${rows.length} records across ${years.length} years.`;
-
-            message.style.color =
-                "#8fc8ea";
-
-        }
-
-        catch(error) {
-
-            message.textContent =
-                "Could not read the dataset. Check the CSV format.";
-
-            message.style.color =
-                "#e59b9b";
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   GEOJSON UPLOAD
-   ========================================================= */
-
-document.getElementById(
-    "geoJsonUpload"
-).addEventListener(
-    "change",
-    function(event) {
-
-        const file =
-            event.target.files[0];
-
-
-        if (!file) {
-
-            return;
-
         }
 
 
-        const reader =
-            new FileReader();
+        /* =========================================================
+           PERMANENT CASE LOCATION CSV
+           ========================================================= */
+
+        function parseCaseLocationsCSV(text) {
+
+            const lines =
+                text
+                    .split(/\r?\n/)
+                    .map(line => line.trim())
+                    .filter(Boolean);
+
+            if (lines.length < 2) {
+                return [];
+            }
+
+            const header =
+                lines[0]
+                    .split(",")
+                    .map(value => value.trim().toLowerCase());
+
+            const index = name => header.indexOf(name);
+
+            const caseIdIndex = index("case_id");
+            const districtIndex = index("district");
+            const provinceIndex = index("province");
+            const latitudeIndex = index("latitude");
+            const longitudeIndex = index("longitude");
+            const yearIndex = index("year");
+
+            if (
+                districtIndex === -1 ||
+                provinceIndex === -1 ||
+                latitudeIndex === -1 ||
+                longitudeIndex === -1 ||
+                yearIndex === -1
+            ) {
+                throw new Error(
+                    "Case CSV must contain district, province, latitude, longitude and year columns."
+                );
+            }
+
+            return lines
+                .slice(1)
+                .map(line => {
+
+                    const parts =
+                        line.split(",").map(value => value.trim());
+
+                    const latitude =
+                        parseFloat(parts[latitudeIndex]);
+
+                    const longitude =
+                        parseFloat(parts[longitudeIndex]);
+
+                    const year =
+                        parseInt(parts[yearIndex]);
+
+                    if (
+                        !parts[districtIndex] ||
+                        !parts[provinceIndex] ||
+                        isNaN(latitude) ||
+                        isNaN(longitude) ||
+                        isNaN(year)
+                    ) {
+                        return null;
+                    }
+
+                    return {
+                        caseId:
+                            caseIdIndex >= 0
+                                ? parts[caseIdIndex]
+                                : "CASE-" + Math.random().toString(36).slice(2),
+
+                        district:
+                            parts[districtIndex],
+
+                        province:
+                            parts[provinceIndex],
+
+                        lat:
+                            latitude,
+
+                        lon:
+                            longitude,
+
+                        year:
+                            year
+                    };
+
+                })
+                .filter(Boolean);
+
+        }
 
 
-        reader.onload =
-            function() {
+        function loadCaseLocationData(text) {
 
-                try {
+            caseLocations =
+                parseCaseLocationsCSV(text);
 
-                    const geojson =
-                        JSON.parse(
-                            reader.result
+            const aggregate = {};
+
+            caseLocations.forEach(caseRecord => {
+
+                const key =
+                    `${normalizeDistrict(caseRecord.district)}|${caseRecord.year}`;
+
+                if (!aggregate[key]) {
+
+                    aggregate[key] = {
+
+                        district:
+                            caseRecord.district,
+
+                        province:
+                            caseRecord.province,
+
+                        lat:
+                            caseRecord.lat,
+
+                        lon:
+                            caseRecord.lon,
+
+                        year:
+                            caseRecord.year,
+
+                        cases:
+                            0
+
+                    };
+
+                }
+
+                aggregate[key].cases += 1;
+
+            });
+
+            rows =
+                Object.values(aggregate);
+
+            years =
+                [...new Set(
+                    rows.map(
+                        row => row.year
+                    )
+                )]
+                    .sort(
+                        (a, b) => a - b
+                    );
+
+            if (!years.length) {
+                return;
+            }
+
+            yearSlider.min = 0;
+            yearSlider.max = years.length - 1;
+            yearSlider.value = years.length - 1;
+            selectedYear = years[years.length - 1];
+
+            yearTicks.innerHTML =
+                years
+                    .map(
+                        year => `<span>${year}</span>`
+                    )
+                    .join("");
+
+            updateCaseMarkers();
+            updateMap();
+            updateDataPanel();
+
+        }
+
+
+        function loadPermanentCaseLocations() {
+
+            fetch("polio_case_locations_fake.csv")
+
+                .then(response => {
+
+                    if (!response.ok) {
+                        throw new Error(
+                            "Could not load polio_case_locations_fake.csv"
+                        );
+                    }
+
+                    return response.text();
+
+                })
+
+                .then(csv => {
+
+                    loadCaseLocationData(csv);
+
+                    console.log(
+                        `Loaded ${caseLocations.length} synthetic case locations.`
+                    );
+
+                    const message =
+                        document.getElementById("dataMessage");
+
+                    if (message) {
+                        message.textContent =
+                            `Loaded ${caseLocations.length} synthetic case locations.`;
+                        message.style.color = "#8fc8ea";
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Case CSV loading error:",
+                        error
+                    );
+
+                    const message =
+                        document.getElementById("dataMessage");
+
+                    if (message) {
+                        message.textContent =
+                            "Could not load the case-location CSV.";
+                        message.style.color = "#e59b9b";
+                    }
+
+                });
+
+        }
+
+
+        /* =========================================================
+           CASE LOCATION MARKERS
+           ========================================================= */
+
+        function updateCaseMarkers() {
+
+            if (!map) {
+                return;
+            }
+
+            if (caseLayer) {
+                map.removeLayer(caseLayer);
+            }
+
+            caseLayer =
+                L.layerGroup();
+
+            caseLocations
+                .filter(
+                    caseRecord =>
+                        caseRecord.year === selectedYear
+                )
+                .forEach(caseRecord => {
+
+                    const marker =
+                        L.circleMarker(
+                            [
+                                caseRecord.lat,
+                                caseRecord.lon
+                            ],
+                            {
+                                radius: 5,
+                                stroke: false,
+                                color: "#0d3b66",
+                                weight: 0,
+                                fillColor: "#0d3b66",
+                                fillOpacity: 1
+                            }
+                        );
+
+                    marker.addTo(caseLayer);
+
+                });
+
+            caseLayer.addTo(map);
+
+        }
+
+
+        /* =========================================================
+           GET SELECTED DATA
+           ========================================================= */
+
+        function selectedRows() {
+
+            return rows.filter(
+                row =>
+                    row.year ===
+                    selectedYear
+            );
+
+        }
+
+
+        /* =========================================================
+           GET DISTRICT CASES
+           ========================================================= */
+
+        function districtCases() {
+
+            const result = {};
+
+            selectedRows()
+                .forEach(row => {
+
+                    const key =
+                        normalizeDistrict(
+                            row.district
                         );
 
 
-                    loadGeoJSON(
-                        geojson
+                    if (!result[key]) {
+
+                        result[key] = {
+
+                            name:
+                                row.district,
+
+                            province:
+                                row.province,
+
+                            cases:
+                                0
+
+                        };
+
+                    }
+
+
+                    result[key].cases +=
+                        row.cases;
+
+                });
+
+
+            return result;
+
+        }
+
+
+        /* =========================================================
+           COLOR INTERPOLATION
+           ========================================================= */
+
+        function hexToRgb(hex) {
+
+            hex =
+                hex.replace(
+                    "#",
+                    ""
+                );
+
+
+            return {
+
+                r:
+                    parseInt(
+                        hex.substring(0, 2),
+                        16
+                    ),
+
+                g:
+                    parseInt(
+                        hex.substring(2, 4),
+                        16
+                    ),
+
+                b:
+                    parseInt(
+                        hex.substring(4, 6),
+                        16
+                    )
+
+            };
+
+        }
+
+
+        function rgbToHex(r, g, b) {
+
+            return "#" +
+
+                [
+                    r,
+                    g,
+                    b
+                ]
+
+                    .map(
+                        value =>
+                            Math.round(value)
+                                .toString(16)
+                                .padStart(2, "0")
+                    )
+
+                    .join("");
+
+        }
+
+
+        function interpolateColor(
+            start,
+            end,
+            amount
+        ) {
+
+            const a =
+                hexToRgb(start);
+
+            const b =
+                hexToRgb(end);
+
+
+            return rgbToHex(
+
+                a.r +
+                (
+                    b.r -
+                    a.r
+                ) *
+                amount,
+
+                a.g +
+                (
+                    b.g -
+                    a.g
+                ) *
+                amount,
+
+                a.b +
+                (
+                    b.b -
+                    a.b
+                ) *
+                amount
+
+            );
+
+        }
+
+
+        /* =========================================================
+           DENSITY COLOR
+           ========================================================= */
+
+        function densityColor(
+            cases,
+            max
+        ) {
+
+            if (
+                !cases ||
+                cases <= 0
+            ) {
+
+                return "#dceff9";
+
+            }
+
+
+            if (!max) {
+
+                return "#dceff9";
+
+            }
+
+
+            const intensity =
+                Math.sqrt(
+                    cases / max
+                );
+
+
+            return interpolateColor(
+                "#dceff9",
+                "#0d3b66",
+                intensity
+            );
+
+        }
+
+
+        /* =========================================================
+           INITIALIZE MAP
+           ========================================================= */
+
+        function initializeMap() {
+
+            map =
+                L.map(
+                    "map",
+                    {
+
+                        zoomControl:
+                            true,
+
+                        attributionControl:
+                            true,
+
+                        minZoom:
+                            5,
+
+                        maxBounds:
+                            PAKISTAN_BOUNDS.pad(0.25),
+
+                        maxBoundsViscosity:
+                            0.85
+
+                    }
+                );
+
+
+            /*
+               Pakistan initial view. The map opens
+               fitted tightly to the national bounds
+               and stays focused there; loadGeoJSON()
+               refines this further once the district
+               boundaries are in.
+            */
+
+            map.fitBounds(
+                PAKISTAN_BOUNDS,
+                {
+                    padding:
+                        [20, 20]
+                }
+            );
+
+
+            /*
+               Satellite imagery.
+               Esri World Imagery is used as the
+               satellite base layer.
+            */
+
+            const satellite =
+                L.tileLayer(
+
+                    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+
+                    {
+
+                        maxZoom:
+                            18,
+
+                        attribution:
+                            "Tiles © Esri"
+
+                    }
+
+                );
+
+
+            satellite.addTo(map);
+
+
+            /*
+               Add a subtle dark layer over the
+               satellite imagery so blue density
+               colors remain visible.
+            */
+
+            L.tileLayer(
+
+                "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+
+                {
+
+                    opacity:
+                        0.18,
+
+                    maxZoom:
+                        19,
+
+                    attribution:
+                        "&copy; CARTO"
+
+                }
+
+            ).addTo(map);
+
+
+            /*
+               Pakistan center marker is not used.
+               The map remains visually clean.
+            */
+
+        }
+
+
+        /* =========================================================
+           GEOJSON STYLE
+           ========================================================= */
+
+        function styleDistrict(
+            feature
+        ) {
+
+            const properties =
+                feature.properties ||
+                {};
+
+
+            const district =
+                properties.district ||
+                properties.DISTRICT ||
+                properties.name ||
+                properties.NAME ||
+                properties.NAME_3 ||
+                properties.DIST_NAME ||
+                properties.ADM2_EN ||
+                properties.shapeName ||
+                "";
+
+
+            const casesData =
+                districtCases();
+
+
+            const key =
+                normalizeDistrict(
+                    district
+                );
+
+
+            const values =
+                Object.values(
+                    casesData
+                );
+
+
+            const max =
+                values.length
+
+                    ? Math.max(
+                        ...values.map(
+                            item =>
+                                item.cases
+                        )
+                    )
+
+                    : 0;
+
+
+            const record =
+                casesData[key];
+
+
+            return {
+
+                fillColor:
+                    densityColor(
+                        record
+                            ? record.cases
+                            : 0,
+                        max
+                    ),
+
+                fillOpacity:
+                    record
+                        ? 0.00
+                        : 0.00,
+
+                color:
+                    "rgba(255,255,255,.75)",
+
+                weight:
+                    0.0
+
+            };
+
+        }
+
+
+        /* =========================================================
+           GEOJSON TOOLTIP
+           ========================================================= */
+
+        function onEachDistrict(
+            feature,
+            layer
+        ) {
+
+            const properties =
+                feature.properties ||
+                {};
+
+
+            const district =
+                properties.district ||
+                properties.DISTRICT ||
+                properties.name ||
+                properties.NAME ||
+                properties.NAME_3 ||
+                properties.DIST_NAME ||
+                properties.ADM2_EN ||
+                properties.shapeName ||
+                "Unknown district";
+
+
+            const casesData =
+                districtCases();
+
+
+            const record =
+                casesData[
+                normalizeDistrict(
+                    district
+                )
+                ];
+
+
+            const cases =
+                record
+                    ? record.cases
+                    : 0;
+
+
+            const province =
+                record
+                    ? record.province
+                    : "";
+
+
+            layer.bindTooltip(
+
+                `
+            <strong>
+                ${escapeHtml(district)}
+            </strong>
+
+            ${province
+                    ? `<br>${escapeHtml(province)}`
+                    : ""
+                }
+
+            <br>
+
+            Cases:
+            <strong>
+                ${cases}
+            </strong>
+
+        `,
+
+                {
+
+                    sticky:
+                        true,
+
+                    direction:
+                        "top",
+
+                    className:
+                        "district-tooltip"
+
+                }
+
+            );
+
+
+            layer.on({
+
+                mouseover:
+                    event => {
+
+                        event.target.setStyle({
+
+                            weight:
+                                2,
+
+                            color:
+                                "#ffffff",
+
+                            fillOpacity:
+                                0.86
+
+                        });
+
+                    },
+
+
+                mouseout:
+                    event => {
+
+                        districtLayer.resetStyle(
+                            event.target
+                        );
+
+                    }
+
+            });
+
+        }
+
+
+        /* =========================================================
+           LOAD GEOJSON
+           ========================================================= */
+
+        function loadGeoJSON(
+            geojson
+        ) {
+
+            if (districtLayer) {
+
+                map.removeLayer(
+                    districtLayer
+                );
+
+                districtLayer =
+                    null;
+
+            }
+
+
+            districtLayer =
+                L.geoJSON(
+
+                    geojson,
+
+                    {
+
+                        style:
+                            styleDistrict,
+
+                        onEachFeature:
+                            onEachDistrict
+
+                    }
+
+                );
+
+
+            districtLayer.addTo(
+                map
+            );
+
+
+            try {
+
+                map.fitBounds(
+                    districtLayer.getBounds(),
+                    {
+
+                        padding:
+                            [60, 60],
+
+                        maxZoom:
+                            7
+
+                    }
+                );
+
+            }
+
+            catch (error) {
+
+                console.warn(
+                    "Could not fit GeoJSON bounds.",
+                    error
+                );
+
+            }
+
+
+            drawNationalBorder(
+                geojson
+            );
+
+        }
+
+
+        /* =========================================================
+           NATIONAL BORDER (DOTTED)
+           ========================================================= */
+
+        /*
+           District polygons are usually simplified
+           independently, so their shared edges rarely
+           line up exactly. Unioning them directly leaves
+           thin gaps along almost every internal boundary,
+           which then get traced as if they were borders
+           too. To get a clean *national* outline only:
+        
+             1. Buffer every district outward a touch so
+                neighbouring edges overlap.
+             2. Dissolve the whole set into one shape.
+             3. Shrink it back in by the same amount.
+             4. Keep only the substantial landmass(es),
+                dropping any leftover slivers.
+        
+           Falls back quietly if turf is unavailable or
+           the geometry can't be merged.
+        */
+
+        function drawNationalBorder(
+            geojson
+        ) {
+
+            if (nationalBorderFromFile) {
+
+                /*
+                   A dedicated ADM0 boundary file already
+                   loaded successfully — that's the real
+                   national outline, so don't overwrite it
+                   with a district-derived approximation.
+                */
+
+                return;
+
+            }
+
+
+            if (nationalBorderLayer) {
+
+                map.removeLayer(
+                    nationalBorderLayer
+                );
+
+                nationalBorderLayer =
+                    null;
+
+            }
+
+
+            if (
+                typeof turf === "undefined" ||
+                !geojson ||
+                !geojson.features ||
+                !geojson.features.length
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const polygons =
+                    geojson.features.filter(
+                        feature =>
+                            feature.geometry &&
+                            (
+                                feature.geometry.type === "Polygon" ||
+                                feature.geometry.type === "MultiPolygon"
+                            )
                     );
 
 
-                    document.getElementById(
-                        "dataMessage"
-                    ).textContent =
-                        `Loaded ${file.name}.`;
+                if (!polygons.length) {
+
+                    return;
+
+                }
 
 
+                /*
+                   Seam-closing buffer, in kilometers.
+                   Small relative to district size, large
+                   enough to bridge simplification gaps.
+                */
+
+                const SEAM_KM = 2;
+
+
+                const buffered =
+                    polygons
+                        .map(
+                            feature => {
+
+                                try {
+
+                                    return turf.buffer(
+                                        feature,
+                                        SEAM_KM,
+                                        { units: "kilometers" }
+                                    );
+
+                                }
+
+                                catch (error) {
+
+                                    return null;
+
+                                }
+
+                            }
+                        )
+                        .filter(Boolean);
+
+
+                if (!buffered.length) {
+
+                    return;
+
+                }
+
+
+                let dissolved =
+                    turf.union(
+                        turf.featureCollection(
+                            buffered
+                        )
+                    );
+
+
+                if (!dissolved) {
+
+                    return;
+
+                }
+
+
+                const shrunk =
+                    turf.buffer(
+                        dissolved,
+                        -SEAM_KM,
+                        { units: "kilometers" }
+                    ) ||
+                    dissolved;
+
+
+                /*
+                   Split any remaining multi-part result
+                   into individual polygons and keep only
+                   ones large enough to be real landmass,
+                   not leftover simplification slivers.
+                */
+
+                const parts =
+                    shrunk.geometry.type === "Polygon"
+                        ? [shrunk]
+                        : turf.flatten(shrunk).features;
+
+
+                const areas =
+                    parts.map(
+                        part =>
+                            turf.area(part)
+                    );
+
+
+                const maxArea =
+                    Math.max(
+                        ...areas
+                    );
+
+
+                const significant =
+                    parts.filter(
+                        (part, index) =>
+                            areas[index] >
+                            maxArea * 0.02
+                    );
+
+
+                if (!significant.length) {
+
+                    return;
+
+                }
+
+
+                const outline =
+                    significant.length === 1
+                        ? significant[0]
+                        : turf.combine(
+                            turf.featureCollection(
+                                significant
+                            )
+                        );
+
+
+                renderBorderLayer(
+                    outline
+                );
+
+            }
+
+            catch (error) {
+
+                console.warn(
+                    "Could not derive national border.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           RENDER BORDER LAYER
+           ========================================================= */
+
+        /*
+           Shared renderer used both by the district-
+           derived outline above and by a dedicated ADM0
+           boundary file, if one is present (see
+           loadPermanentBorder below).
+        */
+
+        function renderBorderLayer(
+            geojson
+        ) {
+
+            if (nationalBorderLayer) {
+
+                map.removeLayer(
+                    nationalBorderLayer
+                );
+
+                nationalBorderLayer =
+                    null;
+
+            }
+
+
+            nationalBorderLayer =
+                L.geoJSON(
+                    geojson,
+                    {
+
+                        interactive:
+                            false,
+
+                        style: {
+
+                            color:
+                                "#eaf6ff",
+
+                            weight:
+                                3,
+
+                            opacity:
+                                0.9,
+
+                            fill:
+                                false,
+
+                            lineCap:
+                                "round",
+
+                            dashArray:
+                                "1, 9"
+
+                        }
+
+                    }
+                );
+
+
+            nationalBorderLayer.addTo(
+                map
+            );
+
+        }
+
+
+        /* =========================================================
+           UPDATE MAP
+           ========================================================= */
+
+        function updateMap() {
+
+            if (!map) {
+
+                return;
+
+            }
+
+
+            if (districtLayer) {
+
+                districtLayer.setStyle(
+                    styleDistrict
+                );
+
+            }
+
+
+            const current =
+                selectedRows();
+
+
+            const total =
+                current.reduce(
+                    (
+                        sum,
+                        row
+                    ) =>
+                        sum +
+                        row.cases,
+
+                    0
+                );
+
+
+            yearDisplay.textContent =
+                selectedYear;
+
+
+            sliderYear.textContent =
+                selectedYear;
+
+
+            sliderTotal.textContent =
+                `${total} case${total === 1 ? "" : "s"}`;
+
+        }
+
+
+        /* =========================================================
+           UPDATE DATA PANEL
+           ========================================================= */
+
+        function updateDataPanel() {
+
+            const current =
+                selectedRows();
+
+
+            const total =
+                current.reduce(
+                    (
+                        sum,
+                        row
+                    ) =>
+                        sum +
+                        row.cases,
+
+                    0
+                );
+
+
+            const districtCount =
+                new Set(
+                    current.map(
+                        row =>
+                            normalizeDistrict(
+                                row.district
+                            )
+                    )
+                ).size;
+
+
+            const highest =
+                current.length
+                    ? Math.max(
+                        ...current.map(
+                            row =>
+                                row.cases
+                        )
+                    )
+                    : 0;
+
+
+            const average =
+                current.length
+                    ? (
+                        total /
+                        current.length
+                    ).toFixed(1)
+
+                    : "0.0";
+
+
+            document.getElementById(
+                "dataTotalCases"
+            ).textContent =
+                total;
+
+
+            document.getElementById(
+                "dataDistricts"
+            ).textContent =
+                districtCount;
+
+
+            document.getElementById(
+                "dataHighest"
+            ).textContent =
+                highest;
+
+
+            document.getElementById(
+                "dataAverage"
+            ).textContent =
+                average;
+
+
+            const sorted =
+                [
+                    ...current
+                ]
+                    .sort(
+                        (
+                            a,
+                            b
+                        ) =>
+                            b.cases -
+                            a.cases
+                    );
+
+
+            dataTable.innerHTML =
+                sorted
+                    .map(
+                        row => `
+
+                    <tr>
+
+                        <td>
+                            ${escapeHtml(
+                            row.district
+                        )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                            row.province
+                        )}
+                        </td>
+
+                        <td>
+                            ${row.year}
+                        </td>
+
+                        <td>
+                            ${row.cases}
+                        </td>
+
+                    </tr>
+
+                `
+                    )
+                    .join("");
+
+
+        }
+
+
+        /* =========================================================
+           YEAR SLIDER
+           ========================================================= */
+
+        yearSlider.addEventListener(
+            "input",
+            function () {
+
+                selectedYear =
+                    years[
+                    Number(
+                        yearSlider.value
+                    )
+                    ];
+
+
+                updateCaseMarkers();
+
+                updateMap();
+
+                updateDataPanel();
+
+            }
+        );
+
+
+        /* =========================================================
+           PANEL NAVIGATION (MAP / DATA / ORGANIZATIONS)
+           ========================================================= */
+
+        function setActiveNav(
+            activeButton
+        ) {
+
+            [
+                mapButton,
+                dataButton,
+                orgButton
+            ]
+                .forEach(
+                    button => {
+
+                        button.classList.toggle(
+                            "active",
+                            button === activeButton
+                        );
+
+                    }
+                );
+
+        }
+
+
+        function openDataPanel() {
+
+            orgPanel.classList.remove(
+                "open"
+            );
+
+            dataPanel.classList.add(
+                "open"
+            );
+
+
+            setActiveNav(
+                dataButton
+            );
+
+
+            updateDataPanel();
+
+        }
+
+
+        function openOrgPanel() {
+
+            dataPanel.classList.remove(
+                "open"
+            );
+
+            orgPanel.classList.add(
+                "open"
+            );
+
+
+            setActiveNav(
+                orgButton
+            );
+
+        }
+
+
+        function closeAllPanels() {
+
+            dataPanel.classList.remove(
+                "open"
+            );
+
+            orgPanel.classList.remove(
+                "open"
+            );
+
+
+            setActiveNav(
+                mapButton
+            );
+
+
+            setTimeout(
+                () => {
+
+                    map.invalidateSize();
+
+                },
+
+                450
+            );
+
+        }
+
+
+        dataButton.addEventListener(
+            "click",
+            openDataPanel
+        );
+
+
+        orgButton.addEventListener(
+            "click",
+            openOrgPanel
+        );
+
+
+        closeData.addEventListener(
+            "click",
+            closeAllPanels
+        );
+
+
+        closeOrg.addEventListener(
+            "click",
+            closeAllPanels
+        );
+
+
+        mapButton.addEventListener(
+            "click",
+            closeAllPanels
+        );
+
+
+        /* =========================================================
+           APPLY CSV DATA
+           ========================================================= */
+
+        document.getElementById(
+            "applyData"
+        ).addEventListener(
+            "click",
+            function () {
+
+                const input =
+                    document.getElementById(
+                        "csvInput"
+                    );
+
+
+                const message =
                     document.getElementById(
                         "dataMessage"
-                    ).style.color =
+                    );
+
+
+                try {
+
+                    const parsed =
+                        parseCSV(
+                            input.value
+                        );
+
+
+                    if (!parsed.length) {
+
+                        throw new Error(
+                            "No valid rows."
+                        );
+
+                    }
+
+
+                    rows =
+                        parsed;
+
+
+                    years =
+                        [
+                            ...new Set(
+                                rows.map(
+                                    row =>
+                                        row.year
+                                )
+                            )
+                        ]
+                            .sort(
+                                (a, b) =>
+                                    a - b
+                            );
+
+
+                    yearSlider.max =
+                        years.length - 1;
+
+
+                    yearSlider.value =
+                        years.length - 1;
+
+
+                    selectedYear =
+                        years[
+                        years.length - 1
+                        ];
+
+
+                    yearTicks.innerHTML =
+                        years
+                            .map(
+                                year =>
+                                    `<span>${year}</span>`
+                            )
+                            .join("");
+
+
+                    updateMap();
+
+                    updateDataPanel();
+
+
+                    message.textContent =
+                        `Applied ${rows.length} records across ${years.length} years.`;
+
+                    message.style.color =
                         "#8fc8ea";
 
                 }
 
-                catch(error) {
+                catch (error) {
 
-                    document.getElementById(
-                        "dataMessage"
-                    ).textContent =
-                        "Invalid GeoJSON file.";
+                    message.textContent =
+                        "Could not read the dataset. Check the CSV format.";
 
-                    document.getElementById(
-                        "dataMessage"
-                    ).style.color =
+                    message.style.color =
                         "#e59b9b";
 
                 }
 
-            };
-
-
-        reader.readAsText(
-            file
+            }
         );
 
-    }
-);
 
-
-/* =========================================================
-   PERMANENT NATIONAL BORDER (OPTIONAL)
-   ========================================================= */
-
-/*
-   If a dedicated country-outline file is present
-   (e.g. an ADM0 boundary saved as border.geojson,
-   alongside index.geojson), use it directly for
-   the dotted border instead of deriving one from
-   the district polygons. Quietly does nothing if
-   the file isn't there — the district-derived
-   outline drawn in loadGeoJSON() covers that case.
-*/
-
-function loadPermanentBorder() {
-
-    fetch("border.geojson")
-
-        .then(response => {
-
-            if (!response.ok) {
-                throw new Error(
-                    "No dedicated border.geojson found."
-                );
-            }
-
-            return response.json();
-
-        })
-
-        .then(geojson => {
-
-            renderBorderLayer(
-                geojson
-            );
-
-            nationalBorderFromFile =
-                true;
-
-        })
-
-        .catch(() => {
-
-            /*
-               No file, or it failed to load —
-               fall back silently to the district-
-               derived border once districts load.
-            */
-
-        });
-
-}
-
-
-/* =========================================================
-   PERMANENT GEOJSON
-   ========================================================= */
-
-function loadPermanentGeoJSON() {
-
-    fetch("index.geojson")
-
-        .then(response => {
-
-            if (!response.ok) {
-                throw new Error(
-                    "Could not load pakistan-districts.geojson"
-                );
-            }
-
-            return response.json();
-
-        })
-
-        .then(geojson => {
-
-            loadGeoJSON(geojson);
-
-            const status =
-                document.getElementById("geoJsonStatus");
-
-            if (status) {
-                status.textContent =
-                    "District boundaries loaded automatically.";
-                status.style.color = "#8fc8ea";
-            }
-
-        })
-
-        .catch(error => {
-
-            console.error(
-                "GeoJSON loading error:",
-                error
-            );
-
-            const status =
-                document.getElementById("geoJsonStatus");
-
-            if (status) {
-                status.textContent =
-                    "Could not load pakistan-districts.geojson.";
-                status.style.color = "#e59b9b";
-            }
-
-        });
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-   ========================================================= */
-
-function escapeHtml(
-    value
-) {
-
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   INITIALIZE
-   ========================================================= */
-
-window.addEventListener(
-    "load",
-    function() {
-
-        /*
-           Start map.
-        */
-
-        initializeMap();
-
-
-        /*
-           Load a dedicated national border file,
-           if one is present — see
-           loadPermanentBorder() for details.
-        */
-
-        loadPermanentBorder();
-
-
-        /*
-           Load permanent district boundaries.
-        */
-
-        loadPermanentGeoJSON();
-
-
-        /*
-           Load permanent case-location CSV.
-        */
-
-        loadPermanentCaseLocations();
-
-
-        /*
-           Keep the sample CSV visible in the
-           manual data editor as a fallback.
-        */
+        /* =========================================================
+           GEOJSON UPLOAD
+           ========================================================= */
 
         document.getElementById(
-            "csvInput"
-        ).value =
-            SAMPLE_CSV;
+            "geoJsonUpload"
+        ).addEventListener(
+            "change",
+            function (event) {
+
+                const file =
+                    event.target.files[0];
 
 
-        /*
-           Give satellite tiles a moment
-           to initialize before removing
-           the loading screen.
-        */
+                if (!file) {
 
-        setTimeout(
-            function() {
+                    return;
 
-                loader.classList.add(
-                    "hidden"
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    function () {
+
+                        try {
+
+                            const geojson =
+                                JSON.parse(
+                                    reader.result
+                                );
+
+
+                            loadGeoJSON(
+                                geojson
+                            );
+
+
+                            document.getElementById(
+                                "dataMessage"
+                            ).textContent =
+                                `Loaded ${file.name}.`;
+
+
+                            document.getElementById(
+                                "dataMessage"
+                            ).style.color =
+                                "#8fc8ea";
+
+                        }
+
+                        catch (error) {
+
+                            document.getElementById(
+                                "dataMessage"
+                            ).textContent =
+                                "Invalid GeoJSON file.";
+
+                            document.getElementById(
+                                "dataMessage"
+                            ).style.color =
+                                "#e59b9b";
+
+                        }
+
+                    };
+
+
+                reader.readAsText(
+                    file
                 );
 
-            },
-
-            1200
+            }
         );
 
-    }
-);
 
-</script>
+        /* =========================================================
+           PERMANENT NATIONAL BORDER (OPTIONAL)
+           ========================================================= */
+
+        /*
+           If a dedicated country-outline file is present
+           (e.g. an ADM0 boundary saved as border.geojson,
+           alongside index.geojson), use it directly for
+           the dotted border instead of deriving one from
+           the district polygons. Quietly does nothing if
+           the file isn't there — the district-derived
+           outline drawn in loadGeoJSON() covers that case.
+        */
+
+        function loadPermanentBorder() {
+
+            fetch("border.geojson")
+
+                .then(response => {
+
+                    if (!response.ok) {
+                        throw new Error(
+                            "No dedicated border.geojson found."
+                        );
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(geojson => {
+
+                    renderBorderLayer(
+                        geojson
+                    );
+
+                    nationalBorderFromFile =
+                        true;
+
+                })
+
+                .catch(() => {
+
+                    /*
+                       No file, or it failed to load —
+                       fall back silently to the district-
+                       derived border once districts load.
+                    */
+
+                });
+
+        }
+
+
+        /* =========================================================
+           PERMANENT GEOJSON
+           ========================================================= */
+
+        function loadPermanentGeoJSON() {
+
+            fetch("index.geojson")
+
+                .then(response => {
+
+                    if (!response.ok) {
+                        throw new Error(
+                            "Could not load pakistan-districts.geojson"
+                        );
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(geojson => {
+
+                    loadGeoJSON(geojson);
+
+                    const status =
+                        document.getElementById("geoJsonStatus");
+
+                    if (status) {
+                        status.textContent =
+                            "District boundaries loaded automatically.";
+                        status.style.color = "#8fc8ea";
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "GeoJSON loading error:",
+                        error
+                    );
+
+                    const status =
+                        document.getElementById("geoJsonStatus");
+
+                    if (status) {
+                        status.textContent =
+                            "Could not load pakistan-districts.geojson.";
+                        status.style.color = "#e59b9b";
+                    }
+
+                });
+
+        }
+
+
+        /* =========================================================
+           ESCAPE HTML
+           ========================================================= */
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(value)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /* =========================================================
+           INITIALIZE
+           ========================================================= */
+
+        window.addEventListener(
+            "load",
+            function () {
+
+                /*
+                   Start map.
+                */
+
+                initializeMap();
+
+
+                /*
+                   Load a dedicated national border file,
+                   if one is present — see
+                   loadPermanentBorder() for details.
+                */
+
+                loadPermanentBorder();
+
+
+                /*
+                   Load permanent district boundaries.
+                */
+
+                loadPermanentGeoJSON();
+
+
+                /*
+                   Load permanent case-location CSV.
+                */
+
+                loadPermanentCaseLocations();
+
+
+                /*
+                   Keep the sample CSV visible in the
+                   manual data editor as a fallback.
+                */
+
+                document.getElementById(
+                    "csvInput"
+                ).value =
+                    SAMPLE_CSV;
+
+
+                /*
+                   Give satellite tiles a moment
+                   to initialize before removing
+                   the loading screen.
+                */
+
+                setTimeout(
+                    function () {
+
+                        loader.classList.add(
+                            "hidden"
+                        );
+
+                    },
+
+                    1200
+                );
+
+            }
+        );
+
+    </script>
 
 </body>
 
