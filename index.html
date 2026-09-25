@@ -199,6 +199,22 @@ body {
 }
 
 
+.loader-logo {
+
+    position: absolute;
+
+    width: 46px;
+    height: 46px;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 2px 14px
+        rgba(0,0,0,.35);
+
+}
+
+
 .loader-title {
 
     font-size: 18px;
@@ -350,28 +366,25 @@ body {
 
 .brand-mark {
 
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
 
-    border-radius: 7px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #0d3b66,
-            #397eb1
-        );
+    flex-shrink: 0;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    font-family: var(--mono);
+}
 
-    font-size: 12px;
 
-    font-weight: 600;
+.brand-mark img {
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
 
 }
 
@@ -843,7 +856,8 @@ input[type="range"]::-moz-range-thumb {
    DATA PANEL
    ========================================================= */
 
-#dataPanel {
+#dataPanel,
+#orgPanel {
 
     position: absolute;
 
@@ -866,7 +880,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
-#dataPanel.open {
+#dataPanel.open,
+#orgPanel.open {
 
     transform:
         translateX(0);
@@ -1296,6 +1311,179 @@ input[type="file"] {
 
 
 /* =========================================================
+   ORGANIZATIONS PANEL
+   ========================================================= */
+
+.org-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 14px;
+
+}
+
+
+.org-card {
+
+    background:
+        rgba(255,255,255,.035);
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+
+}
+
+
+.org-card:hover {
+
+    background:
+        rgba(255,255,255,.06);
+
+    border-color:
+        rgba(255,255,255,.18);
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+.org-icon {
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d3b66,
+            #397eb1
+        );
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-family: var(--mono);
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    letter-spacing: .02em;
+
+}
+
+
+.org-card h3 {
+
+    margin: 0;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    line-height: 1.4;
+
+}
+
+
+.org-role {
+
+    font-family: var(--mono);
+
+    font-size: 8px;
+
+    color: #8fc8ea;
+
+    letter-spacing: .07em;
+
+    text-transform: uppercase;
+
+}
+
+
+.org-card p {
+
+    margin: 0;
+
+    font-size: 11.5px;
+
+    line-height: 1.6;
+
+    color: var(--muted);
+
+}
+
+
+.org-note {
+
+    margin-top: 22px;
+
+    border:
+        1px dashed
+        rgba(255,255,255,.18);
+
+    border-radius: 8px;
+
+    padding: 14px 16px;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+
+    color: var(--muted);
+
+}
+
+
+@media (max-width: 900px) {
+
+    .org-grid {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+}
+
+
+@media (max-width: 560px) {
+
+    .org-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+/* =========================================================
    LEAFLET
    ========================================================= */
 
@@ -1483,6 +1671,12 @@ input[type="file"] {
 
         <div class="loader-inner"></div>
 
+        <img
+            class="loader-logo"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxYTVjOTYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDYyYzRmIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1OCIgZmlsbD0idXJsKCNnKSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMzUpIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjQ3IiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4yMikiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxwYXRoIGQ9Ik02MCAyNiBMODggMzYgVjYwIEM4OCA4MCA3NiA5MiA2MCA5OCBDNDQgOTIgMzIgODAgMzIgNjAgVjM2IFoiCiAgICAgICAgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA4KSIgc3Ryb2tlPSIjZWFmNmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik00NSA2MSBMNTUgNzEgTDc3IDQ3IiBmaWxsPSJub25lIiBzdHJva2U9IiNlYWY2ZmYiIHN0cm9rZS13aWR0aD0iNS41IgogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K"
+            alt="Pakistan Polio Surveillance"
+        >
+
     </div>
 
     <div class="loader-title">
@@ -1514,7 +1708,12 @@ input[type="file"] {
     <div class="brand">
 
         <div class="brand-mark">
-            PS
+
+            <img
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxYTVjOTYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDYyYzRmIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1OCIgZmlsbD0idXJsKCNnKSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMzUpIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjQ3IiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4yMikiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxwYXRoIGQ9Ik02MCAyNiBMODggMzYgVjYwIEM4OCA4MCA3NiA5MiA2MCA5OCBDNDQgOTIgMzIgODAgMzIgNjAgVjM2IFoiCiAgICAgICAgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA4KSIgc3Ryb2tlPSIjZWFmNmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik00NSA2MSBMNTUgNzEgTDc3IDQ3IiBmaWxsPSJub25lIiBzdHJva2U9IiNlYWY2ZmYiIHN0cm9rZS13aWR0aD0iNS41IgogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K"
+                alt="Logo"
+            >
+
         </div>
 
         <div class="brand-text">
@@ -1547,6 +1746,13 @@ input[type="file"] {
             type="button"
         >
             DATA
+        </button>
+
+        <button
+            id="orgButton"
+            type="button"
+        >
+            ORGANIZATIONS
         </button>
 
     </div>
@@ -1933,11 +2139,205 @@ input[type="file"] {
 
 
 <!-- =====================================================
+     ORGANIZATIONS PANEL
+     ===================================================== -->
+
+<div id="orgPanel">
+
+    <div class="data-page">
+
+        <div class="data-header">
+
+            <div>
+
+                <h1>
+                    Partner Organizations
+                </h1>
+
+                <p>
+                    The organizations working alongside Pakistan's
+                    government to end polio transmission.
+                </p>
+
+            </div>
+
+
+            <button
+                class="close-data"
+                id="closeOrg"
+                type="button"
+            >
+                ← Back to map
+            </button>
+
+        </div>
+
+
+        <div class="org-grid">
+
+            <div class="org-card">
+
+                <div class="org-icon">WHO</div>
+
+                <div>
+                    <div class="org-role">
+                        Technical &amp; surveillance lead
+                    </div>
+                    <h3>World Health Organization</h3>
+                </div>
+
+                <p>
+                    Provides technical guidance, disease surveillance
+                    systems, and outbreak response coordination for
+                    the national program.
+                </p>
+
+            </div>
+
+
+            <div class="org-card">
+
+                <div class="org-icon">UN</div>
+
+                <div>
+                    <div class="org-role">
+                        Vaccines &amp; logistics
+                    </div>
+                    <h3>UNICEF</h3>
+                </div>
+
+                <p>
+                    Manages vaccine supply and cold-chain logistics,
+                    and leads community engagement to build vaccine
+                    acceptance.
+                </p>
+
+            </div>
+
+
+            <div class="org-card">
+
+                <div class="org-icon">RI</div>
+
+                <div>
+                    <div class="org-role">
+                        Grassroots &amp; funding
+                    </div>
+                    <h3>Rotary International</h3>
+                </div>
+
+                <p>
+                    Mobilizes volunteers and community fundraising
+                    through PolioPlus, a driving force behind the
+                    eradication effort since 1988.
+                </p>
+
+            </div>
+
+
+            <div class="org-card">
+
+                <div class="org-icon">CDC</div>
+
+                <div>
+                    <div class="org-role">
+                        Laboratory &amp; epidemiology
+                    </div>
+                    <h3>U.S. CDC</h3>
+                </div>
+
+                <p>
+                    Supports laboratory confirmation of cases,
+                    field epidemiology, and technical staffing for
+                    outbreak investigations.
+                </p>
+
+            </div>
+
+
+            <div class="org-card">
+
+                <div class="org-icon">BMGF</div>
+
+                <div>
+                    <div class="org-role">
+                        Core funding partner
+                    </div>
+                    <h3>Gates Foundation</h3>
+                </div>
+
+                <p>
+                    A major funder of vaccine research, procurement,
+                    and program delivery costs across the campaign.
+                </p>
+
+            </div>
+
+
+            <div class="org-card">
+
+                <div class="org-icon">GAVI</div>
+
+                <div>
+                    <div class="org-role">
+                        Immunization financing
+                    </div>
+                    <h3>Gavi, the Vaccine Alliance</h3>
+                </div>
+
+                <p>
+                    Helps finance routine immunization delivery and
+                    broader health-system strengthening that supports
+                    polio eradication.
+                </p>
+
+            </div>
+
+
+            <div class="org-card">
+
+                <div class="org-icon">NEOC</div>
+
+                <div>
+                    <div class="org-role">
+                        National program lead
+                    </div>
+                    <h3>Pakistan Polio Eradication Programme</h3>
+                </div>
+
+                <p>
+                    The government's National Emergency Operations
+                    Centre plans campaigns and coordinates frontline
+                    workers across every province.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="org-note">
+            Together these partners make up the Global Polio
+            Eradication Initiative (GPEI), the public-private
+            partnership coordinating the worldwide effort to end
+            polio.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
      LEAFLET
      ===================================================== -->
 
 <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"
 ></script>
 
 
@@ -2011,11 +2411,32 @@ let selectedYear = 2024;
 
 let districtLayer = null;
 
+let nationalBorderLayer = null;
+
+let nationalBorderFromFile = false;
+
 let caseLayer = null;
 
 let caseLocations = [];
 
 let map;
+
+
+/* =========================================================
+   PAKISTAN FOCUS BOUNDS
+   ========================================================= */
+
+/*
+   Approximate national bounding box, used to focus
+   the initial view and to softly lock panning to
+   Pakistan and its immediate surroundings.
+*/
+
+const PAKISTAN_BOUNDS =
+    L.latLngBounds(
+        [ 22.8, 59.8 ],
+        [ 37.3, 78.0 ]
+    );
 
 
 /* =========================================================
@@ -2054,6 +2475,15 @@ const closeData =
 
 const dataTable =
     document.getElementById("dataTable");
+
+const orgPanel =
+    document.getElementById("orgPanel");
+
+const orgButton =
+    document.getElementById("orgButton");
+
+const closeOrg =
+    document.getElementById("closeOrg");
 
 
 /* =========================================================
@@ -2712,22 +3142,35 @@ function initializeMap() {
                     true,
 
                 attributionControl:
-                    true
+                    true,
+
+                minZoom:
+                    5,
+
+                maxBounds:
+                    PAKISTAN_BOUNDS.pad(0.25),
+
+                maxBoundsViscosity:
+                    0.85
 
             }
         );
 
 
     /*
-       Pakistan initial view.
+       Pakistan initial view. The map opens
+       fitted tightly to the national bounds
+       and stays focused there; loadGeoJSON()
+       refines this further once the district
+       boundaries are in.
     */
 
-    map.setView(
-        [
-            30.5,
-            69.3
-        ],
-        5
+    map.fitBounds(
+        PAKISTAN_BOUNDS,
+        {
+            padding:
+                [ 20, 20 ]
+        }
     );
 
 
@@ -2812,6 +3255,8 @@ function styleDistrict(
         properties.NAME ||
         properties.NAME_3 ||
         properties.DIST_NAME ||
+        properties.ADM2_EN ||
+        properties.shapeName ||
         "";
 
 
@@ -2895,6 +3340,8 @@ function onEachDistrict(
         properties.NAME ||
         properties.NAME_3 ||
         properties.DIST_NAME ||
+        properties.ADM2_EN ||
+        properties.shapeName ||
         "Unknown district";
 
 
@@ -3063,6 +3510,299 @@ function loadGeoJSON(
         );
 
     }
+
+
+    drawNationalBorder(
+        geojson
+    );
+
+}
+
+
+/* =========================================================
+   NATIONAL BORDER (DOTTED)
+   ========================================================= */
+
+/*
+   District polygons are usually simplified
+   independently, so their shared edges rarely
+   line up exactly. Unioning them directly leaves
+   thin gaps along almost every internal boundary,
+   which then get traced as if they were borders
+   too. To get a clean *national* outline only:
+
+     1. Buffer every district outward a touch so
+        neighbouring edges overlap.
+     2. Dissolve the whole set into one shape.
+     3. Shrink it back in by the same amount.
+     4. Keep only the substantial landmass(es),
+        dropping any leftover slivers.
+
+   Falls back quietly if turf is unavailable or
+   the geometry can't be merged.
+*/
+
+function drawNationalBorder(
+    geojson
+) {
+
+    if (nationalBorderFromFile) {
+
+        /*
+           A dedicated ADM0 boundary file already
+           loaded successfully — that's the real
+           national outline, so don't overwrite it
+           with a district-derived approximation.
+        */
+
+        return;
+
+    }
+
+
+    if (nationalBorderLayer) {
+
+        map.removeLayer(
+            nationalBorderLayer
+        );
+
+        nationalBorderLayer =
+            null;
+
+    }
+
+
+    if (
+        typeof turf === "undefined" ||
+        !geojson ||
+        !geojson.features ||
+        !geojson.features.length
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const polygons =
+            geojson.features.filter(
+                feature =>
+                    feature.geometry &&
+                    (
+                        feature.geometry.type === "Polygon" ||
+                        feature.geometry.type === "MultiPolygon"
+                    )
+            );
+
+
+        if (!polygons.length) {
+
+            return;
+
+        }
+
+
+        /*
+           Seam-closing buffer, in kilometers.
+           Small relative to district size, large
+           enough to bridge simplification gaps.
+        */
+
+        const SEAM_KM = 2;
+
+
+        const buffered =
+            polygons
+                .map(
+                    feature => {
+
+                        try {
+
+                            return turf.buffer(
+                                feature,
+                                SEAM_KM,
+                                { units: "kilometers" }
+                            );
+
+                        }
+
+                        catch(error) {
+
+                            return null;
+
+                        }
+
+                    }
+                )
+                .filter(Boolean);
+
+
+        if (!buffered.length) {
+
+            return;
+
+        }
+
+
+        let dissolved =
+            turf.union(
+                turf.featureCollection(
+                    buffered
+                )
+            );
+
+
+        if (!dissolved) {
+
+            return;
+
+        }
+
+
+        const shrunk =
+            turf.buffer(
+                dissolved,
+                -SEAM_KM,
+                { units: "kilometers" }
+            ) ||
+            dissolved;
+
+
+        /*
+           Split any remaining multi-part result
+           into individual polygons and keep only
+           ones large enough to be real landmass,
+           not leftover simplification slivers.
+        */
+
+        const parts =
+            shrunk.geometry.type === "Polygon"
+                ? [ shrunk ]
+                : turf.flatten(shrunk).features;
+
+
+        const areas =
+            parts.map(
+                part =>
+                    turf.area(part)
+            );
+
+
+        const maxArea =
+            Math.max(
+                ...areas
+            );
+
+
+        const significant =
+            parts.filter(
+                (part, index) =>
+                    areas[index] >
+                        maxArea * 0.02
+            );
+
+
+        if (!significant.length) {
+
+            return;
+
+        }
+
+
+        const outline =
+            significant.length === 1
+                ? significant[0]
+                : turf.combine(
+                    turf.featureCollection(
+                        significant
+                    )
+                );
+
+
+        renderBorderLayer(
+            outline
+        );
+
+    }
+
+    catch(error) {
+
+        console.warn(
+            "Could not derive national border.",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER BORDER LAYER
+   ========================================================= */
+
+/*
+   Shared renderer used both by the district-
+   derived outline above and by a dedicated ADM0
+   boundary file, if one is present (see
+   loadPermanentBorder below).
+*/
+
+function renderBorderLayer(
+    geojson
+) {
+
+    if (nationalBorderLayer) {
+
+        map.removeLayer(
+            nationalBorderLayer
+        );
+
+        nationalBorderLayer =
+            null;
+
+    }
+
+
+    nationalBorderLayer =
+        L.geoJSON(
+            geojson,
+            {
+
+                interactive:
+                    false,
+
+                style: {
+
+                    color:
+                        "#eaf6ff",
+
+                    weight:
+                        3,
+
+                    opacity:
+                        0.9,
+
+                    fill:
+                        false,
+
+                    lineCap:
+                        "round",
+
+                    dashArray:
+                        "1, 9"
+
+                }
+
+            }
+        );
+
+
+    nationalBorderLayer.addTo(
+        map
+    );
 
 }
 
@@ -3277,23 +4017,45 @@ yearSlider.addEventListener(
 
 
 /* =========================================================
-   DATA PANEL OPEN
+   PANEL NAVIGATION (MAP / DATA / ORGANIZATIONS)
    ========================================================= */
 
+function setActiveNav(
+    activeButton
+) {
+
+    [
+        mapButton,
+        dataButton,
+        orgButton
+    ]
+        .forEach(
+            button => {
+
+                button.classList.toggle(
+                    "active",
+                    button === activeButton
+                );
+
+            }
+        );
+
+}
+
+
 function openDataPanel() {
+
+    orgPanel.classList.remove(
+        "open"
+    );
 
     dataPanel.classList.add(
         "open"
     );
 
 
-    dataButton.classList.add(
-        "active"
-    );
-
-
-    mapButton.classList.remove(
-        "active"
+    setActiveNav(
+        dataButton
     );
 
 
@@ -3302,24 +4064,37 @@ function openDataPanel() {
 }
 
 
-/* =========================================================
-   DATA PANEL CLOSE
-   ========================================================= */
-
-function closeDataPanel() {
+function openOrgPanel() {
 
     dataPanel.classList.remove(
         "open"
     );
 
-
-    mapButton.classList.add(
-        "active"
+    orgPanel.classList.add(
+        "open"
     );
 
 
-    dataButton.classList.remove(
-        "active"
+    setActiveNav(
+        orgButton
+    );
+
+}
+
+
+function closeAllPanels() {
+
+    dataPanel.classList.remove(
+        "open"
+    );
+
+    orgPanel.classList.remove(
+        "open"
+    );
+
+
+    setActiveNav(
+        mapButton
     );
 
 
@@ -3336,25 +4111,33 @@ function closeDataPanel() {
 }
 
 
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
 dataButton.addEventListener(
     "click",
     openDataPanel
 );
 
 
+orgButton.addEventListener(
+    "click",
+    openOrgPanel
+);
+
+
 closeData.addEventListener(
     "click",
-    closeDataPanel
+    closeAllPanels
+);
+
+
+closeOrg.addEventListener(
+    "click",
+    closeAllPanels
 );
 
 
 mapButton.addEventListener(
     "click",
-    closeDataPanel
+    closeAllPanels
 );
 
 
@@ -3546,6 +4329,60 @@ document.getElementById(
 
 
 /* =========================================================
+   PERMANENT NATIONAL BORDER (OPTIONAL)
+   ========================================================= */
+
+/*
+   If a dedicated country-outline file is present
+   (e.g. an ADM0 boundary saved as border.geojson,
+   alongside index.geojson), use it directly for
+   the dotted border instead of deriving one from
+   the district polygons. Quietly does nothing if
+   the file isn't there — the district-derived
+   outline drawn in loadGeoJSON() covers that case.
+*/
+
+function loadPermanentBorder() {
+
+    fetch("border.geojson")
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error(
+                    "No dedicated border.geojson found."
+                );
+            }
+
+            return response.json();
+
+        })
+
+        .then(geojson => {
+
+            renderBorderLayer(
+                geojson
+            );
+
+            nationalBorderFromFile =
+                true;
+
+        })
+
+        .catch(() => {
+
+            /*
+               No file, or it failed to load —
+               fall back silently to the district-
+               derived border once districts load.
+            */
+
+        });
+
+}
+
+
+/* =========================================================
    PERMANENT GEOJSON
    ========================================================= */
 
@@ -3652,6 +4489,15 @@ window.addEventListener(
         */
 
         initializeMap();
+
+
+        /*
+           Load a dedicated national border file,
+           if one is present — see
+           loadPermanentBorder() for details.
+        */
+
+        loadPermanentBorder();
 
 
         /*
