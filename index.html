@@ -32,8 +32,24 @@
             --blue-mid: #397eb1;
             --blue-light: #a9cfe8;
 
+            /*
+               Case-severity scale. Warm/hot tones read as
+               "urgency" the way a cool blue scale doesn't —
+               used for the district choropleth, case markers
+               and the legend gradient.
+            */
+            --case-0: #dceaf0;
+            --case-1: #ffe9a8;
+            --case-2: #f6a94e;
+            --case-3: #e2622c;
+            --case-4: #b3182a;
+
+            --danger: #dc2626;
+
             --white: #ffffff;
             --muted: #aab8c4;
+
+            --ease: cubic-bezier(.4, 0, .2, 1);
 
             --glass: rgba(8, 20, 30, 0.78);
             --glass-light: rgba(8, 20, 30, 0.64);
@@ -104,6 +120,25 @@
             background: #08141d;
             color: var(--white);
 
+        }
+
+        #dataPanel,
+        #orgPanel {
+            scroll-behavior: smooth;
+        }
+
+        button,
+        a,
+        input[type="range"] {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: 2px solid var(--teal);
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
 
@@ -472,8 +507,8 @@
             cursor: pointer;
 
             transition:
-                background .2s ease,
-                color .2s ease;
+                background .2s var(--ease),
+                color .2s var(--ease);
 
         }
 
@@ -627,11 +662,11 @@
 
             background:
                 linear-gradient(90deg,
-                    #dceff9,
-                    #a9cfe8,
-                    #6fa8d0,
-                    #397eb1,
-                    #0d3b66);
+                    var(--case-0),
+                    var(--case-1),
+                    var(--case-2),
+                    var(--case-3),
+                    var(--case-4));
 
         }
 
@@ -667,8 +702,14 @@
 
             left: 50%;
 
+            /*
+               Rest state now only tucks away most of the panel
+               (not all of it) — a sliver of the year and slider
+               stays visible so people notice it's there instead
+               of needing to discover a 55px hover strip.
+            */
             transform:
-                translateX(-50%) translateY(68px);
+                translateX(-50%) translateY(48px);
 
             width: min(700px, calc(100% - 40px));
 
@@ -692,7 +733,7 @@
                 12px 12px 0 0;
 
             transition:
-                transform .3s ease;
+                transform .35s var(--ease);
 
         }
 
@@ -713,7 +754,7 @@
 
             bottom: 0;
 
-            height: 55px;
+            height: 90px;
 
         }
 
@@ -1022,9 +1063,9 @@
             letter-spacing: .02em;
 
             transition:
-                background .2s ease,
-                border-color .2s ease,
-                transform .2s ease;
+                background .2s var(--ease),
+                border-color .2s var(--ease),
+                transform .2s var(--ease);
 
         }
 
@@ -1081,8 +1122,8 @@
             overflow: hidden;
 
             transition:
-                background .2s ease,
-                border-color .2s ease;
+                background .2s var(--ease),
+                border-color .2s var(--ease);
 
         }
 
@@ -1329,7 +1370,7 @@
                 rgba(255, 255, 255, .82);
 
             transition:
-                background .15s ease;
+                background .15s var(--ease);
 
         }
 
@@ -1382,7 +1423,7 @@
             outline: none;
 
             transition:
-                border-color .2s ease;
+                border-color .2s var(--ease);
 
         }
 
@@ -1426,8 +1467,8 @@
             cursor: pointer;
 
             transition:
-                filter .2s ease,
-                transform .2s ease;
+                filter .2s var(--ease),
+                transform .2s var(--ease);
 
         }
 
@@ -1459,7 +1500,7 @@
             padding: 16px;
 
             transition:
-                border-color .2s ease;
+                border-color .2s var(--ease);
 
         }
 
@@ -1614,10 +1655,10 @@
             overflow: hidden;
 
             transition:
-                background .2s ease,
-                border-color .2s ease,
-                transform .2s ease,
-                box-shadow .2s ease;
+                background .2s var(--ease),
+                border-color .2s var(--ease),
+                transform .2s var(--ease),
+                box-shadow .2s var(--ease);
 
         }
 
@@ -3183,32 +3224,91 @@ Gilgit,Gilgit-Baltistan,35.92,74.31,2024,1`;
             caseLayer =
                 L.layerGroup();
 
-            caseLocations
-                .filter(
+            const yearRecords =
+                caseLocations.filter(
                     caseRecord =>
                         caseRecord.year === selectedYear
-                )
-                .forEach(caseRecord => {
+                );
 
-                    const marker =
-                        L.circleMarker(
-                            [
-                                caseRecord.lat,
-                                caseRecord.lon
-                            ],
-                            {
-                                radius: 5,
-                                stroke: false,
-                                color: "#0d3b66",
-                                weight: 0,
-                                fillColor: "#0d3b66",
-                                fillOpacity: 1
-                            }
-                        );
+            const maxCases =
+                yearRecords.length
+                    ? Math.max(
+                        ...yearRecords.map(
+                            caseRecord => caseRecord.cases
+                        )
+                    )
+                    : 0;
 
-                    marker.addTo(caseLayer);
+            yearRecords.forEach(caseRecord => {
 
+                /*
+                   Size and color both carry severity now,
+                   instead of every marker being an identical
+                   flat-blue dot regardless of case count.
+                */
+                const fill =
+                    densityColor(
+                        caseRecord.cases,
+                        maxCases
+                    );
+
+                const radius =
+                    4 + Math.sqrt(
+                        (caseRecord.cases || 0)
+                    ) * 2.6;
+
+                const marker =
+                    L.circleMarker(
+                        [
+                            caseRecord.lat,
+                            caseRecord.lon
+                        ],
+                        {
+                            radius: Math.min(radius, 18),
+                            stroke: true,
+                            color: "rgba(255,255,255,.65)",
+                            weight: 1,
+                            fillColor: fill,
+                            fillOpacity: 0.92
+                        }
+                    );
+
+                marker.bindTooltip(
+                    `
+                    <strong>${escapeHtml(caseRecord.district)}</strong>
+                    ${caseRecord.province
+                        ? `<br>${escapeHtml(caseRecord.province)}`
+                        : ""
+                    }
+                    <br>Cases: <strong>${caseRecord.cases}</strong>
+                    `,
+                    {
+                        sticky: true,
+                        direction: "top",
+                        className: "district-tooltip"
+                    }
+                );
+
+                marker.on({
+                    mouseover: event => {
+                        event.target.setStyle({
+                            weight: 2,
+                            color: "#ffffff",
+                            fillOpacity: 1
+                        });
+                    },
+                    mouseout: event => {
+                        event.target.setStyle({
+                            weight: 1,
+                            color: "rgba(255,255,255,.65)",
+                            fillOpacity: 0.92
+                        });
+                    }
                 });
+
+                marker.addTo(caseLayer);
+
+            });
 
             caseLayer.addTo(map);
 
@@ -3388,31 +3488,52 @@ Gilgit,Gilgit-Baltistan,35.92,74.31,2024,1`;
 
             if (
                 !cases ||
-                cases <= 0
+                cases <= 0 ||
+                !max
             ) {
 
-                return "#dceff9";
+                return getComputedStyle(document.documentElement)
+                    .getPropertyValue("--case-0")
+                    .trim();
 
             }
 
 
-            if (!max) {
-
-                return "#dceff9";
-
-            }
-
+            /*
+               sqrt() keeps a handful of low-case districts from
+               all looking equally faint next to one outbreak
+               district — it compresses the high end a little.
+            */
 
             const intensity =
-                Math.sqrt(
-                    cases / max
+                Math.min(
+                    1,
+                    Math.sqrt(
+                        cases / max
+                    )
                 );
 
+            const stops = [
+                "--case-0",
+                "--case-1",
+                "--case-2",
+                "--case-3",
+                "--case-4"
+            ].map(
+                name =>
+                    getComputedStyle(document.documentElement)
+                        .getPropertyValue(name).trim()
+            );
+
+            const scaled = intensity * (stops.length - 1);
+            const lower = Math.floor(scaled);
+            const upper = Math.min(stops.length - 1, lower + 1);
+            const localAmount = scaled - lower;
 
             return interpolateColor(
-                "#dceff9",
-                "#0d3b66",
-                intensity
+                stops[lower],
+                stops[upper],
+                localAmount
             );
 
         }
@@ -3584,6 +3705,11 @@ Gilgit,Gilgit-Baltistan,35.92,74.31,2024,1`;
                 casesData[key];
 
 
+            const intensity =
+                record && max
+                    ? Math.min(1, Math.sqrt(record.cases / max))
+                    : 0;
+
             return {
 
                 fillColor:
@@ -3594,16 +3720,23 @@ Gilgit,Gilgit-Baltistan,35.92,74.31,2024,1`;
                         max
                     ),
 
+                /*
+                   Districts with no cases still get a faint
+                   fill so the boundary reads as "checked, zero"
+                   rather than "no data" — and affected districts
+                   scale up with severity so the map communicates
+                   at a glance, not just via the dot markers.
+                */
                 fillOpacity:
                     record
-                        ? 0.00
-                        : 0.00,
+                        ? 0.25 + intensity * 0.35
+                        : 0.06,
 
                 color:
-                    "rgba(255,255,255,.75)",
+                    "rgba(255,255,255,.28)",
 
                 weight:
-                    0.0
+                    0.75
 
             };
 
